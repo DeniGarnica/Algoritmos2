@@ -33,28 +33,29 @@ template <class T, class Key> class UpdatableHeap{
       int tam = info.size();
       int tam2 = heap.size();
       if(tam>a && tam>b && tam2>a && tam2>b){ //Para asegurarnos que esisten estos elementos en el vector
-      if(mapa.find(info[a])!= mapa.end() && mapa.find(info[b])!= mapa.end()){ //Para asegurarnos que esisten estos elementos en el mapa
-        if(mapa[info[a]]!=-1){
-          mapa[info[a]]=b;}
-        if(mapa[info[b]]!=-1){
-          mapa[info[b]]=a;}
-        T aux1=heap[a];
-        Key aux2=info[a];
-        heap[a]=heap[b];
-        info[a]=info[b];
-        heap[b]=aux1;
-        info[b]=aux2;
+      if(mapa.count(info.at(a))>0 && mapa.count(info.at(b))>0){ //Para asegurarnos que esisten estos elementos en el mapa
+        if(mapa[info.at(a)]!=-1){
+          mapa[info.at(a)]=b;}
+        if(mapa[info.at(b)]!=-1){
+          mapa[info.at(b)]=a;}
+        T aux1=heap.at(a);
+        Key aux2=info.at(a);
+        heap.at(a)=heap.at(b);
+        info.at(a)=info.at(b);
+        heap.at(b)=aux1;
+        info.at(b)=aux2;
       }}
     }
     void HeapifyDownUp(int i){ //Checa si su padre es mayor y reacomoda
     if(i!=0){//Si es cualquier otro que no sea la raiz, tiene un padre.
-      if(heap[Parent(i)]<heap[i]){//Si el padre es menor, swap
+      if(heap.at(Parent(i))<heap.at(i)){//Si el padre es menor, swap
         swapi(i,Parent(i));
         HeapifyDownUp(Parent(i));//si hubo un cambio, checa ahora con el nuevo padre.
       }else{
-        if(heap[Parent(i)]==heap[i]){ //Si tienen la misma prioriedad acomoda segun la clave
-          if(info[Parent(i)]<info[i]){
+        if(heap.at(Parent(i))==heap.at(i)){ //Si tienen la misma prioriedad acomoda segun la clave
+          if(info.at(Parent(i))<info.at(i)){
             swapi(i,Parent(i));
+            HeapifyDownUp(Parent(i));
           }
         }
       }
@@ -63,26 +64,26 @@ template <class T, class Key> class UpdatableHeap{
     void HeapifyUpDown(int i){ //Checa si sus hijos son mayores
       int tam = heap.size();
       if(tam>2*i+2){ //De esta manera nos aseguramos que tanto el hijo izquierdo como el derecho existan
-        if(heap[Left(i)]>heap[i] && heap[Left(i)]>heap[Right(i)]){
+        if(heap.at(Left(i))>heap.at(i) && heap.at(Left(i))>heap.at(Right(i))){
           swapi(i,Left(i));
           HeapifyUpDown(Left(i));
         }else{
-          if(heap[Right(i)]>heap[i] && heap[Left(i)]<=heap[Right(i)]){
+          if(heap.at(Right(i))>heap.at(i) && heap.at(Left(i))<=heap.at(Right(i))){
             swapi(i,Right(i));
             HeapifyUpDown(Right(i));
           }
         }
       }else{
         if(tam==2*i+2){ //En caso de que solo exista el hijo izquierdo
-          if(heap[Left(i)]>heap[i]){
+          if(heap.at(Left(i))>heap.at(i)){
             swapi(i,Left(i));
           }
         }
       }
   }
     void ActualizaI(int i, T newValue){ //Cambia el dato y reacomoda
-      T aux = heap[i];
-      heap[i]=newValue;
+      T aux = heap.at(i);
+      heap.at(i)=newValue;
       if(aux>newValue){
         HeapifyUpDown(i); //Si el nuevo valor es menor, checa su relacion con los hijos
       }else{
@@ -100,7 +101,7 @@ public:
       }
     }
     void insertOrUpdate(const T p, const Key k){
-      if(mapa.find(k)!= mapa.end()){ //Si la clave ya esta, cambia el valor
+      if(mapa.count(k)>0){ //Si la clave ya esta, cambia el valor
         T aux = mapa[k] ; //Nos da la posicion del elemento en el vector
         ActualizaI(aux, p);
       }else{ //Si la clave no esta, insertala y ordena
@@ -115,7 +116,7 @@ public:
       if(emptyheap()){
         return 0;
       }else{
-      if(mapa.find(k)!= mapa.end()){ //Si la clave alguna vez a estado
+      if(mapa.count(k)>0){ //Si la clave alguna vez a estado
         int aux = mapa[k];
         if(aux==-1){
           return 0;
@@ -129,8 +130,8 @@ public:
     }
     pair<T, Key> top() const{
         pair <T, Key> top0;
-        T aux1=heap[0];
-        Key aux2=info[0];
+        T aux1=heap.at(0);
+        Key aux2=info.at(0);
         top0 = make_pair(aux1, aux2);
         return top0;
     }
@@ -138,8 +139,9 @@ public:
       return heap.size();
     }
     void imprimeTodo(){
-      for(int i=0;i<heap.size();i++){
-        cout << "mapa: " << mapa[info[i]]<< "  heap: " << heap[i]<< "  info: " << info[i]<<'\n';
+    int tam = heap.size();
+      for(int i=0;i<tam;i++){
+        cout << "mapa: " << mapa[info.at(i)]<< "  heap: " << heap.at(i)<< "  info: " << info.at(i)<<'\n';
       }
     }
     void imprimeMap(){
@@ -153,7 +155,7 @@ public:
         return;
       }else{
         if(heap.size()==1){//En caso de tener un unico elemento solo lo saca
-          mapa[info[0]]=-1;
+          mapa[info.at(0)]=-1;
           heap.pop_back();
           info.pop_back();
           mapa.clear();
@@ -176,7 +178,7 @@ public:
     void pop(){//es equivalente a borrar el elemento 0.
       int tam = heap.size();
       if(tam>0){
-        eraseH(info[0]);
+        eraseH(info.at(0));
       }else{
         return;
       }
@@ -212,6 +214,8 @@ int main(){
              UHeap.eraseH(food);
            }
     }
+    //UHeap.imprimeTodo();
+    //UHeap.imprimeMap();
   }
   return 0;
 }
