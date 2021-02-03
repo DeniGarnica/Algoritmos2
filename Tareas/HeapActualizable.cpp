@@ -162,12 +162,19 @@ public:
         }else{//En otro caso , intercambia el que se va a sacar y el ultimo, saca el ultimo, y reacomoda.
           int aux = mapa[K];
           int tam = heap.size()-1;
+          T aux2= heap.at(aux);
           mapa[K]=-1;
           if(aux!=tam){ //Si no es el ultimo, lo intercambia con el ultimo y lo saca
             swapi(aux, tam);
             heap.pop_back();
             info.pop_back();
-            HeapifyUpDown(aux);
+            if(heap.at(aux)>aux2){//Si la prioridad del que estaba al ultimo, es mayor de la prioridad del que se acaba de sacar, checa la relacion con su padre
+              HeapifyDownUp(aux);
+            }else{
+              if(heap.at(aux)<aux2){//Si la prioridad del que estaba al ultimo, es menor de la prioridad del que se acaba de sacar, checa la relacion con sus hijos
+                HeapifyUpDown(aux);
+              }
+            }
           }else{//Si es el ultimo, solo lo saca
           heap.pop_back();
           info.pop_back();
