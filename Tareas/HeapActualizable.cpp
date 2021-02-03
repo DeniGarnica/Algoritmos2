@@ -71,12 +71,41 @@ template <class T, class Key> class UpdatableHeap{
           if(heap.at(Right(i))>heap.at(i) && heap.at(Left(i))<=heap.at(Right(i))){
             swapi(i,Right(i));
             HeapifyUpDown(Right(i));
+          }else{
+            if(heap.at(Right(i))==heap.at(i)){
+              if(heap.at(Left(i))==heap.at(i)){//Si tiene la misma prioriedad con ambos hijos
+                if(info.at(Right(i))>info.at(Left(i))){
+                  if(info.at(Right(i))>info.at(i)){
+                    swapi(i,Right(i));
+                    HeapifyUpDown(Right(i));
+                  }
+                }else{
+                  if(info.at(Left(i))>info.at(i)){
+                    swapi(i,Left(i));
+                    HeapifyUpDown(Left(i));
+                  }
+                }
+
+              }else{//Si tiene la misma prioriedad solo con el derecho, acomoda segun la clave
+                if(info.at(Right(i))>info.at(i)){
+                  swapi(i,Right(i));
+                  HeapifyUpDown(Right(i));
+                }
+              }
+            }
           }
         }
       }else{
         if(tam==2*i+2){ //En caso de que solo exista el hijo izquierdo
           if(heap.at(Left(i))>heap.at(i)){
             swapi(i,Left(i));
+          }else{
+            if(heap.at(Left(i))==heap.at(i)){ //Si tienen la misma prioriedad, acomoda segun la clave
+              if(info.at(Left(i))>info.at(i)){
+                swapi(i,Left(i));
+                HeapifyUpDown(Left(i));
+              }
+            }
           }
         }
       }
@@ -168,8 +197,13 @@ public:
             swapi(aux, tam);
             heap.pop_back();
             info.pop_back();
-            if(heap.at(aux)>aux2){//Si la prioridad del que estaba al ultimo, es mayor de la prioridad del que se acaba de sacar, checa la relacion con su padre
+            if(heap.at(aux)>=aux2){//Si la prioridad del que estaba al ultimo, es mayor de la prioridad del que se acaba de sacar, checa la relacion con su padre
+              if(aux!=0){
               HeapifyDownUp(aux);
+              }else{
+                HeapifyUpDown(aux);
+              }
+
             }else{
               if(heap.at(aux)<aux2){//Si la prioridad del que estaba al ultimo, es menor de la prioridad del que se acaba de sacar, checa la relacion con sus hijos
                 HeapifyUpDown(aux);
