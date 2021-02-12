@@ -57,8 +57,8 @@ void SplitByValue(Node n, long long d, Node &l, Node &r){ //En l quedan los meno
   n->recalc();
 }
 
-
-void SplitByPosition(Node n, long long pos, Node &l, Node &r, long long ad){
+void SplitByPosition(Node n, long long pos, Node &l, Node &r, long long ad)//Se empeiza contando del 1, pues queremos separar los primeros pos nodos
+{
   //l=r=NULL;
   if(!n) return void( l = r = NULL); //Si N esta vacio
   long long cur_key = ad;
@@ -77,15 +77,39 @@ void SplitByPosition(Node n, long long pos, Node &l, Node &r, long long ad){
   n->recalc();
 }
 
-long long getValueInPos(Node n, long long pos){ //Empezando desde 0
-  if(n->cnt-1==pos) return n->x;
-  if(n->cnt-1 <pos){
-    return getValueInPos(n->r, pos);
-  }else{
-    return getValueInPos(n->l, pos);
-  }
+long long getValueInPos(Node n, long long pos){ //Se empieza contando del 1
+  Node l = NULL;
+  Node r = NULL;
+  SplitByPosition(n, pos, l, r, 0);
+  long long value = l->x;
+  merge(l,r);
+  return value;
 }
 
+void insertInPosition(Node arbol, Node n, long long pos){
+  Node l1 = NULL;
+  Node l2 = NULL;
+  SplitByPosition(arbol, pos, l1, arbol, 0);
+  std::cout << "arbol actual" << '\n';
+  printArbol(arbol, 0);
+  SplitByPosition(l1, pos-1, l1, l2, 0);
+  merge(l1, n);
+  std::cout << "arbol actual n" << '\n';
+  printArbol(n, 0);
+  merge(n, l2);
+  std::cout << "arbol actual l2" << '\n';
+  printArbol(l2, 0);
+  merge(l2, arbol);
+}
+
+void eraseInPosition(Node arbol, long long pos){
+  Node l1 = NULL;
+  Node l2 = NULL;
+  SplitByPosition(arbol, pos, l1, arbol, 0);
+  SplitByPosition(l1, pos-1, l1, l2, 0);
+  merge(l1, arbol);
+  delete l2;
+}
 
 
 int main(){
@@ -106,10 +130,16 @@ int main(){
   printArbol(root,0);
   Node l = NULL;
   Node r = NULL;
-  SplitByPosition(root, 2, l, r, 0);
+  /*SplitByPosition(root, 2, l, r, 0);
   std::cout << "arbol izq" << '\n';
   printArbol(l,0);
   std::cout << "arbol der" << '\n';
-  printArbol(r,0);
+  printArbol(r,0);*/
+  //long long v = getValueInPos(root, 3);
+  //std::cout << "SplitByPosition: " <<  v << '\n';
+  Node n7 = new _Node(15);
+  eraseInPosition(root, 2);
+  std::cout << "nuevo arbol " << '\n';
+  printArbol(root,0);
   return 0;
 }
