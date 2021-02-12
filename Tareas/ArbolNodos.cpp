@@ -26,7 +26,8 @@ void printArbol(Node a, int con){
       std::cout << " ";
     }
     std::cout << a->x << '\n';
-    //std::cout << a->x <<", "<<a->cnt<< '\n';
+    //std::cout << a->x <<", "<<a->cnt<<'\n';
+    //std::cout << a->x <<", "<<a->cnt<< ", p: "<<a->p<<'\n';
     printArbol(a->l, con+1);
   }
 }
@@ -89,17 +90,34 @@ long long getValueInPos(Node n, long long pos){ //Se empieza contando del 1
 void insertInPosition(Node arbol, Node n, long long pos){
   Node l1 = NULL;
   Node l2 = NULL;
-  SplitByPosition(arbol, pos, l1, arbol, 0);
-  std::cout << "arbol actual" << '\n';
-  printArbol(arbol, 0);
-  SplitByPosition(l1, pos-1, l1, l2, 0);
-  merge(l1, n);
-  std::cout << "arbol actual n" << '\n';
-  printArbol(n, 0);
-  merge(n, l2);
-  std::cout << "arbol actual l2" << '\n';
-  printArbol(l2, 0);
-  merge(l2, arbol);
+  if(pos>1){
+    SplitByPosition(arbol, pos, l1, arbol, 0);
+    SplitByPosition(l1, pos-1, l1, l2, 0);
+    merge(l1, n);
+    if(n->cnt>l1->cnt){
+      merge(n, l2);
+      if(n->cnt>l2->cnt){
+        merge(n, arbol);
+      }else{
+        merge(l2,arbol);
+      }
+    }else{
+      merge(l1,l2);
+      if(l1->cnt>l2->cnt){
+        merge(l1, arbol);
+      }else{
+        merge(l2,arbol);
+      }
+    }
+  }else{
+    SplitByPosition(arbol, pos, l1, arbol, 0);
+    merge(n,l1);
+    if(n->cnt>l1->cnt){
+      merge(n, arbol);
+    }else{
+      merge(l1,arbol);
+    }
+  }
 }
 
 void eraseInPosition(Node arbol, long long pos){
@@ -111,9 +129,9 @@ void eraseInPosition(Node arbol, long long pos){
   delete l2;
 }
 
-
 int main(){
   Node root = NULL;
+  //Node n9 = new _Node(6);
   Node n0 = new _Node(11);
   Node n1 = new _Node(21);
   Node n2 = new _Node(35);
@@ -137,8 +155,9 @@ int main(){
   printArbol(r,0);*/
   //long long v = getValueInPos(root, 3);
   //std::cout << "SplitByPosition: " <<  v << '\n';
-  Node n7 = new _Node(15);
-  eraseInPosition(root, 2);
+  Node n7 = new _Node(6);
+  Node n8 = new _Node(8);
+  insertInPosition(root, n8, 1);
   std::cout << "nuevo arbol " << '\n';
   printArbol(root,0);
   return 0;
