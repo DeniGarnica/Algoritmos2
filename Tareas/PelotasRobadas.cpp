@@ -41,8 +41,8 @@ void printArbol(Node a, int con){
     for(int i=0; i<con;i++){
       std::cout << " ";
     }
-    //std::cout << a->x << '\n';
-    std::cout << a->x <<", "<<a->maxi<<"  cnt, "<<a->cnt<<'\n';
+    std::cout << a->x << '\n';
+    //std::cout << a->x <<", "<<a->maxi<<"  cnt, "<<a->cnt<<'\n';
     //std::cout << a->x <<", "<<a->cnt<< ", p: "<<a->p<<'\n';
     printArbol(a->l, con+1);
   }
@@ -100,8 +100,8 @@ long long getValueInPos(Node n, long long pos){ //Se empieza contando del 1
   SplitByPosition(n, pos, l, r, 0);
   SplitByPosition(l, pos-1, l, val, 0);
   long long value = val->x;
-  merge(val,r);
-  merge(l,r);
+  r = merge(val,r);
+  n = merge(l,r);
   return value;
 }
 
@@ -196,13 +196,18 @@ int main(){
     if(peticion==1){
       std::cin >> P1;
       P1++;
+      if(numPelotas>=P1){
       eraseInPosition(root, P1);
+      numPelotas--;
+      }
+
     }//Quita P1
 
     if(peticion==2){
       std::cin >> P1 >> P2;
       P1++;
       P2++;
+      if(numPelotas>=P2){
       if(P1!=P2){
         Node l = NULL;
         Node r = NULL;
@@ -224,7 +229,7 @@ int main(){
           root = merge(l3, r3);
         }
       }
-
+    }
     }//P1 lo lleva a P2
 
     if(peticion==3){//Paredes
