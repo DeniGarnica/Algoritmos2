@@ -9,11 +9,8 @@ struct _Node{
   _Node *l, *r;
   _Node (long long v): x(v), p(((long long)(rand())<<32)^rand()), cnt(1), l(NULL), r(NULL), maxi(v) {}
   ~_Node() {delete l; delete r;}
-  void recalc(){
-    cnt = 1;
-    cnt += ((l)?(l->cnt):0);
-    cnt += ((r)?(r->cnt):0);
-
+  void amax(){
+    maxi=x;
     if(l!=NULL && r!=NULL){//Si tiene ambos hijos
       maxi = max(max(l->maxi, r->maxi), maxi);
     }else{
@@ -28,6 +25,12 @@ struct _Node{
       }
     }
   }
+  void recalc(){
+    cnt = 1;
+    cnt += ((l)?(l->cnt):0);
+    cnt += ((r)?(r->cnt):0);
+    amax();
+  }
 }; typedef _Node *Node;
 
 void printArbol(Node a, int con){
@@ -39,7 +42,7 @@ void printArbol(Node a, int con){
       std::cout << " ";
     }
     //std::cout << a->x << '\n';
-    std::cout << a->x <<", "<<a->maxi<<'\n';
+    std::cout << a->x <<", "<<a->maxi<<"  cnt, "<<a->cnt<<'\n';
     //std::cout << a->x <<", "<<a->cnt<< ", p: "<<a->p<<'\n';
     printArbol(a->l, con+1);
   }
@@ -73,8 +76,7 @@ void SplitByValue(Node n, long long d, Node &l, Node &r){ //En l quedan los meno
 
 void SplitByPosition(Node n, long long pos, Node &l, Node &r, long long ad)//Se empeiza contando del 1, pues queremos separar los primeros pos nodos
 {
-  //l=r=NULL;
-  if(!n) return void( l = r = NULL); //Si N esta vacio
+  if(!n) return void( l = r = NULL);
   long long cur_key = ad;
   long long hi = 0;
   if(n->l!=NULL){
@@ -94,8 +96,11 @@ void SplitByPosition(Node n, long long pos, Node &l, Node &r, long long ad)//Se 
 long long getValueInPos(Node n, long long pos){ //Se empieza contando del 1
   Node l = NULL;
   Node r = NULL;
+  Node val = NULL;
   SplitByPosition(n, pos, l, r, 0);
-  long long value = l->x;
+  SplitByPosition(l, pos-1, l, val, 0);
+  long long value = val->x;
+  merge(val,r);
   merge(l,r);
   return value;
 }
@@ -137,8 +142,10 @@ void eraseInPosition(Node arbol, long long pos){
   Node l1 = NULL;
   Node l2 = NULL;
   SplitByPosition(arbol, pos, l1, arbol, 0);
+  if(l1!=NULL){
   SplitByPosition(l1, pos-1, l1, l2, 0);
   merge(l1, arbol);
+  }
   delete l2;
 }
 
@@ -152,7 +159,7 @@ int main(){
     Node n0 = new _Node(var);
     root = merge(root, n0);
   }
-  printArbol(root,0);
+  //printArbol(root,0);
   int numPeticiones=0;
   int peticion;
   long long P1;
@@ -163,17 +170,69 @@ int main(){
 
     if(peticion==0){
       std::cin >> P1 >> P2;
-    }
+      P1++;
+      P2++;
+      long long respuesta=0;
+      if(P1>P2){
+        std::cout << "-1" << '\n';
+      }else{
+        if(P1==P2){
+          respuesta = getValueInPos(root, P1);
+          std::cout << respuesta << '\n';
+        }else{
+          Node l = NULL;
+          Node r = NULL;
+          Node m = NULL;
+          SplitByPosition(root, P2, m, r, 0);
+          SplitByPosition(m, P1-1, l, m, 0);
+          respuesta=m->maxi;
+          r=merge(m,r);
+          root = merge(l,r);
+          std::cout << respuesta << '\n';
+        }
+      }
+    }//Max en el rango
+
     if(peticion==1){
       std::cin >> P1;
-    }
+      P1++;
+      eraseInPosition(root, P1);
+    }//Quita P1
+
     if(peticion==2){
       std::cin >> P1 >> P2;
-    }
-    if(peticion==3){
-      std::cin >> P1;
-    }
+      P1++;
+      P2++;
+      if(P1!=P2){
+        Node l = NULL;
+        Node r = NULL;
+        Node l2 = NULL;
+        Node r2 = NULL;
+        Node l3 = NULL;
+        Node r3 = NULL;
+        SplitByPosition(root, P1, l, r, 0);
+          SplitByPosition(l, P1-1, l2, r2, 0);
+          r = merge(l2, r); //Para este punto todo esta en r, y solo el nodo p1 esta en r2
 
+        if(P2>P1){//Recordemos que al haber quitado la pelota P1, P2 ahora es P2-1
+          SplitByPosition(r, P2-1, l3, r3, 0);
+          r3 = merge(r2, r3);
+          root = merge(l3, r3);
+        }else{//En este caso P2, continua siendo P2, pero queremos quitar los p2-1
+          SplitByPosition(r, P2-1, l3, r3, 0);
+          r3 = merge(r2, r3);
+          root = merge(l3, r3);
+        }
+      }
+
+    }//P1 lo lleva a P2
+
+    if(peticion==3){//Paredes
+      //printArbol(root, 0);
+      //std::cin >> P1;
+      //P1++;
+    }
+    //printArbol(root, 0);
   }
 
   return 0;
