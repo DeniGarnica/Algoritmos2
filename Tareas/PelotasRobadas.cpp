@@ -20,9 +20,6 @@ struct _Node{
       if(r!=NULL){ //Si solo tiene el hijo der
         maxi = max(r->maxi, maxi);
       }
-      if(l==NULL && r==NULL){
-        maxi = x;
-      }
     }
   }
   void recalc(){
@@ -159,6 +156,7 @@ int main(){
     Node n0 = new _Node(var);
     root = merge(root, n0);
   }
+  int numPelotas2=numPelotas;
   //printArbol(root,0);
   int numPeticiones=0;
   int peticion;
@@ -173,7 +171,7 @@ int main(){
       P1++;
       P2++;
       long long respuesta=0;
-      if(P1>P2){
+      if(P1>P2 || P2 > numPelotas2 ){
         std::cout << "-1" << '\n';
       }else{
         if(P1==P2){
@@ -196,9 +194,9 @@ int main(){
     if(peticion==1){
       std::cin >> P1;
       P1++;
-      if(numPelotas>=P1){
+      if(numPelotas2>=P1){
       eraseInPosition(root, P1);
-      numPelotas--;
+      numPelotas2--;
       }
 
     }//Quita P1
@@ -207,7 +205,7 @@ int main(){
       std::cin >> P1 >> P2;
       P1++;
       P2++;
-      if(numPelotas>=P2){
+      if(numPelotas2>=P2){
       if(P1!=P2){
         Node l = NULL;
         Node r = NULL;
