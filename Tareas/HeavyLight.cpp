@@ -6,19 +6,21 @@ using namespace std;
 int operacion(int a, int b){
   return a+b;
 }
-void construir(vector<int> tree, vector<int> A, int vertex, int L, int R){ //A son nuestros valores iniciales
+void construir(vector<int> &tree, vector<int> A, int vertex, int L, int R){ //A son nuestros valores iniciales
   if(L==R){ //Si son iguales, nos referimos a una hoja
-    tree[vertex]=A[L];
-    A[L]=vertex; //de esta manera guardo en que posicion del tree quedaro cada hoja
+    tree[vertex]=A[R];
+    //std::cout << "hoja: "<< tree[vertex] << '\n';
+    //A[L]=vertex; //de esta manera guardo en que posicion del tree quedaro cada hoja
   }else{
     int  nL = 2*vertex+1;
     int  nR = 2*vertex+2;
     construir(tree, A, nL, L, (L+R)/2); //construye el arbol izquierdo
     construir(tree, A, nR, (L+R)/2 +1, R); //construye el arbol derecho
     tree[vertex] = operacion(tree[nL], tree[nR]); //asigna al nodo la operacion correspondiente de sus dos hijos
+    //std::cout << "nodo: "<< tree[vertex] << '\n';
   }
 }
-int rango(vector<int> tree, int vertex, int L, int R, int l, int r){ //[l,r] es el rango que se esta buscando
+int rango(vector<int> &tree, int vertex, int L, int R, int l, int r){ //[l,r] es el rango que se esta buscando
     if(l>R|| r < L) return -1; //si esta fuera del rango
     if(L>= l && R <= r) return tree[vertex]; //si esta completamente contenido
 
@@ -29,7 +31,7 @@ int rango(vector<int> tree, int vertex, int L, int R, int l, int r){ //[l,r] es 
     if (p2== -1) return p1;
     return operacion(p1, p2);
 }
-void actualizaHoja (vector<int> tree, vector<int> A, int vertex, int k){
+void actualizaHoja (vector<int> &tree, vector<int> A, int vertex, int k){
   tree[A[vertex]]= k;
   int padre = (A[vertex]-1)/2;
   tree[padre]= operacion(tree[2*padre+1], tree[2*padre+2]);
@@ -55,9 +57,10 @@ int subsize(int i, vector<vector<int>> hijos, int *subarbolsize){ // con esta fu
     return subarbolsize[i];
   }
 }
-void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<int>> st, vector<vector<int>> chain, int* curr_chain){
+void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<int>> &st, vector<vector<int>> &chain, int* curr_chain){
+
   chain[curr_chain[0]].push_back(i);//se mete el nodo a la cadena actual
-  std::cout << "se agrego "<< i <<" a la cadena"<< curr_chain[0] << '\n';
+  //std::cout << "se agrego "<< i <<" a la cadena"<< curr_chain[0] << '\n';
   //Buscamos el hijo mas pesado
   if(!hijos[i].empty()){
     int max=0;
@@ -72,9 +75,9 @@ void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<i
 
     for (size_t j = 0; j < hijos[i].size(); j++) {
       if(hijos[i][j]!=nodoPesado){
-        //vector<int> s (chain[curr_chain].size(), 0);
-        //construir(s, chain[curr_chain], 0, 0, chain[curr_chain].size()); //construimos el segmente tree
-        //st[curr_chain]=s;
+        //vector<int> s (chain[curr_chain[0]].size(), 0);
+        //construir(s, chain[curr_chain[0]], 0, 0, chain[curr_chain[0]].size()); //construimos el segmente tree
+        //st[curr_chain[0]]=s;
         curr_chain[0]++; //cambiamos el numero de cadena
         chains(hijos[i][j], subarbolsize, hijos, st, chain, curr_chain);//ponemos el resto de los hijos a otras cadenas
       }
@@ -121,9 +124,12 @@ int main(){
   int curr_chain[1]; //hice este arreglo de tam 1 para poder ir modificando cual es la cadena actual apesar de ser llamadas recursivas
   curr_chain[0]=0;
   chains(0, subarbolsize, hijos, st, chain, curr_chain);//Creamos las cadenas
-  /*for (size_t i = 0; i < chain[0].size(); i++) {
-    std::cout << chain[0][i]<<" ";
-  }*/
+  //std::cout << chain[0][1]<< '\n';
+    vector<int> s (2*chain[0].size()-1, 0);
+    construir(s, chain[0], 0, 0, chain[0].size()-1);
+  for (size_t i = 0; i < 5; i++) {
+    std::cout <<  s[i] <<" ";
+  }
 
 
   return 0;
