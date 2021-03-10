@@ -57,7 +57,7 @@ int subsize(int i, vector<vector<int>> hijos, int *subarbolsize){ // con esta fu
     return subarbolsize[i];
   }
 }
-void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<int>> &st, vector<vector<int>> &chain, int* curr_chain){
+void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<int>> &chain, int* curr_chain){
 
   chain[curr_chain[0]].push_back(i);//se mete el nodo a la cadena actual
   //std::cout << "se agrego "<< i <<" a la cadena"<< curr_chain[0] << '\n';
@@ -71,15 +71,12 @@ void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<i
         nodoPesado=hijos[i][j];
       }
     }
-    chains(nodoPesado, subarbolsize, hijos, st, chain, curr_chain); //metemos el hijo mas pesado a la misma cadena
+    chains(nodoPesado, subarbolsize, hijos,chain, curr_chain); //metemos el hijo mas pesado a la misma cadena
 
     for (size_t j = 0; j < hijos[i].size(); j++) {
       if(hijos[i][j]!=nodoPesado){
-        //vector<int> s (chain[curr_chain[0]].size(), 0);
-        //construir(s, chain[curr_chain[0]], 0, 0, chain[curr_chain[0]].size()); //construimos el segmente tree
-        //st[curr_chain[0]]=s;
         curr_chain[0]++; //cambiamos el numero de cadena
-        chains(hijos[i][j], subarbolsize, hijos, st, chain, curr_chain);//ponemos el resto de los hijos a otras cadenas
+        chains(hijos[i][j], subarbolsize, hijos, chain, curr_chain);//ponemos el resto de los hijos a otras cadenas
       }
     }
   }else{
@@ -123,12 +120,18 @@ int main(){
 
   int curr_chain[1]; //hice este arreglo de tam 1 para poder ir modificando cual es la cadena actual apesar de ser llamadas recursivas
   curr_chain[0]=0;
-  chains(0, subarbolsize, hijos, st, chain, curr_chain);//Creamos las cadenas
-  //std::cout << chain[0][1]<< '\n';
-    vector<int> s (2*chain[0].size()-1, 0);
-    construir(s, chain[0], 0, 0, chain[0].size()-1);
-  for (size_t i = 0; i < 5; i++) {
-    std::cout <<  s[i] <<" ";
+  chains(0, subarbolsize, hijos, chain, curr_chain);//Creamos las cadenas
+  int a = 0;
+  while(!chain[a].empty()&&a<n){ // creamos los st de las cadenas
+    vector<int> s (2*chain[a].size()-1, 0);
+    construir(s, chain[a], 0, 0, chain[a].size()-1);
+    st[a]=s;
+    a++;
+  }
+    //vector<int> s (2*chain[0].size()-1, 0);
+    //construir(s, chain[0], 0, 0, chain[0].size()-1);
+  for (size_t i = 0; i < 2*chain[3].size()-1; i++) {
+    std::cout <<  st[3][i] <<" ";
   }
 
 
