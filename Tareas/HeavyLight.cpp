@@ -6,17 +6,17 @@ using namespace std;
 int operacion(int a, int b){
   return a+b;
 }
-void construir(vector<int> &tree, int*A, vector<int> chain, int vertex, int L, int R){ //A son nuestros valores iniciales
+void construir(vector<int> &tree, int* positions, int*A, vector<int> chain, int vertex, int L, int R){ //A son nuestros valores iniciales
   if(L==R){ //Si son iguales, nos referimos a una hoja
     tree[vertex]=A[chain[L]];
     //std::cout << "hoja: "<< tree[vertex] << '\n';
-    A[L]=vertex; //de esta manera guardo en que posicion del tree quedaro cada hoja
-    std::cout << "El nodo "<< L<< " quedo en "<< vertex << '\n';
+    positions[chain[L]]=vertex; //de esta manera guardo en que posicion del tree quedaro cada hoja
+    //std::cout << "El nodo "<< chain[L]<< " quedo en "<< vertex << '\n';
   }else{
     int  nL = 2*vertex+1;
     int  nR = 2*vertex+2;
-    construir(tree, A, chain, nL, L, (L+R)/2); //construye el arbol izquierdo
-    construir(tree, A, chain,  nR, (L+R)/2 +1, R); //construye el arbol derecho
+    construir(tree, positions, A, chain, nL, L, (L+R)/2); //construye el arbol izquierdo
+    construir(tree, positions, A, chain,  nR, (L+R)/2 +1, R); //construye el arbol derecho
     tree[vertex] = operacion(tree[nL], tree[nR]); //asigna al nodo la operacion correspondiente de sus dos hijos
     //std::cout << "nodo: "<< tree[vertex] << '\n';
   }
@@ -61,8 +61,7 @@ int subsize(int i, vector<vector<int>> hijos, int *subarbolsize){ // con esta fu
 void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<int>> &chain, int* curr_chain, int* numChain){
 
   chain[curr_chain[0]].push_back(i);//se mete el nodo a la cadena actual
-  numChain[i]=curr_chain[0];//gaurdamos en que cadena esta
-  //std::cout << "se agrego "<< i <<" a la cadena"<< curr_chain[0] << '\n';
+  numChain[i]=curr_chain[0];//guardamos en que cadena esta
   //Buscamos el hijo mas pesado
   if(!hijos[i].empty()){
     int max=0;
@@ -87,12 +86,11 @@ void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<i
 }
 
 
-
 int main(){
   int n, q, cambio, valornuevo;
   char peticion;
   std::cin >> n >> q;
-  int A[n]; int padre[n]; int numChain[n]; int subarbolsize[n];
+  int A[n]; int padre[n]; int numChain[n]; int subarbolsize[n]; int positions[n];
   vector<vector<int>> hijos; vector<vector<int>> st; vector<vector<int>> chain;
   padre[0]=0;
   for (size_t i = 0; i < n; i++) {
@@ -121,7 +119,7 @@ int main(){
   int a = 0;
   while(!chain[a].empty()&&a<n){ // creamos los st de las cadenas
     vector<int> s (2*chain[a].size()-1, 0);
-    construir(s, A, chain[a], 0, 0, chain[a].size()-1);
+    construir(s, positions, A, chain[a], 0, 0, chain[a].size()-1);
     st[a]=s;
     a++;
   }
@@ -131,8 +129,7 @@ int main(){
     if(peticion=='U'){
       std::cin >> cambio;
       std::cin >> valornuevo;
-      std::cout << A[cambio] << '\n';
-      actualizaHoja (st[numChain[cambio]], A[cambio], valornuevo);
+      actualizaHoja (st[numChain[cambio]], positions[cambio], valornuevo);
     }
     if(peticion=='P'){
 
