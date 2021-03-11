@@ -43,25 +43,29 @@ void actualizaHoja (vector<int> &tree, int vertex, int k){
   }while(padre != 0);
 }
 
-int subsize(int i, vector<vector<int>> hijos, int *subarbolsize){ // con esta funcion recursiva le asigna los pesos de cada subarbol al arreglo subarbolsize
+int subsize(int i, vector<vector<int>> hijos, int *subarbolsize, int *level){ // con esta funcion recursiva le asigna los pesos de cada subarbol al arreglo subarbolsize
   if(hijos[i].empty()){
     subarbolsize[i]=1;
+    level[i]=0;
+    //std::cout <<  "level de "<< i<< " = "<<level[i] << '\n';
     //std::cout << "Tam del arbol"<< i<<": " << subarbolsize[i]<< '\n';
     return 1;
   }else{
     int aux=0;
     for (size_t j = 0; j < hijos[i].size(); j++) {
-      aux = aux+ subsize(hijos[i][j], hijos, subarbolsize);
+      aux = aux+ subsize(hijos[i][j], hijos, subarbolsize, level);
     }
+    //std::cout <<  "level de "<< i<< " = "<<level[hijos[i][0]]+1 << '\n';
+    level[i]=level[hijos[i][0]]+1;
     subarbolsize[i] = aux+1;
     //std::cout << "Tam del arbol"<< i<<": " << subarbolsize[i]<< '\n';
     return subarbolsize[i];
   }
 }
 void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<int>> &chain, int* curr_chain, int* numChain){
-
   chain[curr_chain[0]].push_back(i);//se mete el nodo a la cadena actual
   numChain[i]=curr_chain[0];//guardamos en que cadena esta
+  //std::cout << "mete nodo "<< i<< " a la cadena "<< curr_chain[0] << '\n';
   //Buscamos el hijo mas pesado
   if(!hijos[i].empty()){
     int max=0;
@@ -86,11 +90,12 @@ void chains(int i, int *subarbolsize, vector<vector<int>> hijos, vector<vector<i
 }
 
 
+
 int main(){
-  int n, q, cambio, valornuevo;
+  int n, q, cambio, valornuevo, n1, n2;
   char peticion;
   std::cin >> n >> q;
-  int A[n]; int padre[n]; int numChain[n]; int subarbolsize[n]; int positions[n];
+  int A[n]; int padre[n]; int numChain[n]; int subarbolsize[n]; int positions[n]; int level[n];
   vector<vector<int>> hijos; vector<vector<int>> st; vector<vector<int>> chain;
   padre[0]=0;
   for (size_t i = 0; i < n; i++) {
@@ -112,7 +117,7 @@ int main(){
     }
     std::cout  << '\n';
   }*/
-  subsize(0, hijos, subarbolsize); //asigna los tama;os de cada subarbol en el arreglo subarbolsize
+  subsize(0, hijos, subarbolsize, level); //asigna los tama;os de cada subarbol en el arreglo subarbolsize
   int curr_chain[1]; //hice este arreglo de tam 1 para poder ir modificando cual es la cadena actual apesar de ser llamadas recursivas
   curr_chain[0]=0;
   chains(0, subarbolsize, hijos, chain, curr_chain, numChain);//Creamos las cadenas
@@ -123,19 +128,19 @@ int main(){
     st[a]=s;
     a++;
   }
-  for (size_t i = 0; i < 2*chain[0].size()-1; i++) {std::cout <<  st[0][i] <<" ";}
+  //for (size_t i = 0; i < 2*chain[0].size()-1; i++) {std::cout <<  st[0][i] <<" ";}
   for (size_t k = 0; k < q; k++) {
     std::cin >> peticion;
     if(peticion=='U'){
-      std::cin >> cambio;
-      std::cin >> valornuevo;
+      std::cin >> cambio >> valornuevo;
       actualizaHoja (st[numChain[cambio]], positions[cambio], valornuevo);
     }
     if(peticion=='P'){
-
+      std::cin >> n1 >> n2;
     }
   }
-  for (size_t i = 0; i < 2*chain[0].size()-1; i++) {std::cout <<  st[0][i] <<" ";}
+  std::cout << "Level max: "<< level[0] << '\n';
+  //for (size_t i = 0; i < 2*chain[0].size()-1; i++) {std::cout <<  st[0][i] <<" ";}
 
 
   return 0;
