@@ -114,31 +114,16 @@ int lca(int u, int v, int* level){
 
 int subir( int* numChain, vector<vector<int>> st, int* posChain, int*padre, int lcap, int n1, vector<vector<int>> &chain){
   int cadenaActual = numChain[n1];
-  std::cout << "cadena actual "<<cadenaActual << '\n';
-  std::cout << "cadena del lca " <<numChain[lcap] <<'\n';
   int nodoActual=n1;
-  std::cout << "nodo actual "<<nodoActual << '\n';
   int ans1=0;
   int aux,p;
   while(cadenaActual!=numChain[lcap]){
     ans1 += rango(st[cadenaActual], 0, 0, chain[cadenaActual].size()-1, 0, posChain[nodoActual]);
     p = chain[numChain[n1]][0];
     cadenaActual=numChain[padre[p]];
-
     nodoActual=padre[p];
-    std::cout << "cadena actual "<<cadenaActual << '\n';
-    std::cout << "cadena del lca " <<numChain[lcap] <<'\n';
-    std::cout << "nodo actual "<<nodoActual << '\n';
-    std::cout << "ans "<<ans1 << '\n';
   }
-  std::cout << "pos lcap "<< posChain[lcap] << '\n';
-  std::cout << "pos n "<< posChain[nodoActual] << '\n';
-  for (size_t i = 0; i < chain[numChain[nodoActual]].size(); i++) {
-    std::cout << "cadena actual "<<chain[numChain[nodoActual]][i] << '\n';
-  }
-  std::cout << "chain[numChain[lcap]].size()-1 "<< chain[numChain[nodoActual]].size()<< '\n';
   ans1 += rango(st[numChain[lcap]], 0, 0, chain[numChain[lcap]].size()-1, posChain[lcap], posChain[nodoActual]);
-  std::cout << "ans "<< ans1 << '\n';
   return ans1;
 }
 
@@ -201,7 +186,6 @@ int main(){
     if(peticion=='P'){
       std::cin >> n1 >> n2;
       int lcap = lca(n1, n2, level);
-      std::cout << "lca " << lcap<< '\n';
       int ans1= subir(numChain,st, posChain, padre, lcap, n1, chain);
       int ans2= subir(numChain,st, posChain, padre, lcap, n2, chain);
       int ans= ans1+ans2-A[lcap];
