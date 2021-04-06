@@ -50,7 +50,7 @@ int main(){
     }
     if(numjugadores>0){
     for(int j=0;j<numjugadores;j++){
-      std::cout << "Position of player "<<j+1<<" is "<<A[j] << '\n';
+      std::cout << "Position of player "<<j+1<<" is "<<A[j]<<"." << '\n';
     }}
 
   }
