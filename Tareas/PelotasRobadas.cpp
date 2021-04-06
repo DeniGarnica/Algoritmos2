@@ -156,7 +156,7 @@ int main(){
     Node n0 = new _Node(var);
     root = merge(root, n0);
   }
-  int numPelotas2=numPelotas;
+  long long numPelotas2=numPelotas;
   //printArbol(root,0);
   int numPeticiones=0;
   int peticion;
@@ -171,9 +171,12 @@ int main(){
       P1++;
       P2++;
       long long respuesta=0;
-      if(P1>P2 || P2 > numPelotas2 ){
+      if(P1>P2 || P1>numPelotas2){
         std::cout << "-1" << '\n';
       }else{
+        if(P2>numPelotas2){
+          P2=numPelotas2;
+        }
         if(P1==P2){
           respuesta = getValueInPos(root, P1);
           std::cout << respuesta << '\n';
@@ -198,7 +201,6 @@ int main(){
       eraseInPosition(root, P1);
       numPelotas2--;
       }
-
     }//Quita P1
 
     if(peticion==2){
@@ -231,9 +233,8 @@ int main(){
     }//P1 lo lleva a P2
 
     if(peticion==3){//Paredes
-      //printArbol(root, 0);
-      //std::cin >> P1;
-      //P1++;
+      std::cin >> P1;
+      P1++;
     }
     //printArbol(root, 0);
   }
