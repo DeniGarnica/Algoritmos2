@@ -18,9 +18,9 @@ int main(){
     }
     int A[num];
     std::cin >> serpientes;
-    std::cin >> dados;
+    std::cin >> dados; //numero de veces que se lanzan los dados
     map<int, int> serpiente;
-    for(int j=0;j<serpientes;j++){
+    for(int j=0;j<serpientes;j++){ //guardamos los lugares deonde empieza y terminan las serpientes y escaleras
       std::cin >> inicio;
       std::cin >> fin;
       serpiente.insert(pair<int, int>(inicio, fin));
@@ -29,7 +29,7 @@ int main(){
       std::cin >> vdado;
       if(gameend==0){
       turno = j%num;
-      if(j<numjugadores){
+      if(j<numjugadores){ //si es el primer turno
         A[turno]=vdado+1;
       }else{
         A[turno]=A[turno]+vdado;
@@ -43,7 +43,7 @@ int main(){
       }
     }
     }
-    if(dados<numjugadores){
+    if(dados<numjugadores){ //si hay menos veces que se tiran los dados quer jugadores los que no jugaron se quedan en la casilla 1
       for(int j=dados;j<numjugadores;j++){
         A[j]=1;
       }

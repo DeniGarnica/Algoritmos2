@@ -18,8 +18,8 @@ int main(){
     if(peso>7){
       std::cout << "0" << '\n';
     }else{
-      if(largo>56 || ancho>45 || prof>25){
-        if(total<=125){
+      if(largo>56 || ancho>45 || prof>25){ //si alguna medida se pasa
+        if(total<=125){ //checamos la otra condicion
           std::cout << "1" << '\n';
           cont++;
         }else{
