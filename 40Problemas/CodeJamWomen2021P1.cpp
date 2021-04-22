@@ -30,6 +30,5 @@ for (int i = 0; i < t; i++) {
   std::cout << "Case #"<< i+1<<": "<<0 << '\n';
 }
 }
-
   return 0;
 }
