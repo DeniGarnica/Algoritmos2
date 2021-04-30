@@ -80,7 +80,7 @@ while (cin) {
       }
     }
   }
-  root0=root(0);
+  root0=root(0); //Solo necesitamos ver cual es la raiz de 0 y ver todos los que tiene esa misma raiz
   for (auto it = mapa.cbegin(); it != mapa.cend(); ++it) {
         if(root((*it).second->data)==root0)
           res++;
