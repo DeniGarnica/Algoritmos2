@@ -64,6 +64,8 @@ while (cin) {
     std::cout  << '\n';
   e=1;
   std::cin >> n>> m;
+  if(n==0 && m==0)
+    break;
   res=0;
   Make_set(0);
   for (int i = 0; i < m; i++) {
