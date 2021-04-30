@@ -17,7 +17,6 @@ void print_map(std::map<int, Node> const &m){
     }
 }
 
-
 void Make_set(int a){
   Node* nodo = new Node();
   nodo->data = a;
@@ -35,7 +34,6 @@ int root(int a){
   }
   return nodo->parent->data;
 }
-
 
 void Union(int a, int b){
   if(a==b){
