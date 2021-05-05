@@ -2,6 +2,7 @@
 #include <cmath>
 using namespace std;
 
+//Hacemos un switch que traduzca de arabigo a Braile
 void braile(char a, string* A){
   switch(a) {
     case '1':
@@ -26,7 +27,7 @@ void braile(char a, string* A){
       break;
     case '5':
       A[0]="*.";
-      A[1]="*.";
+      A[1]=".*";
       A[2]="..";
       break;
     case '6':
@@ -57,12 +58,36 @@ void braile(char a, string* A){
 }
 }
 
+//Hacemos una funcion que reciba el braile y traduzca a arabigo
+int arabigo(string* A){
+  if(A[0]=="*."&&A[1]=="..")
+    return 1;
+  if(A[0]=="*."&&A[1]=="*.")
+    return 2;
+  if(A[0]=="**"&&A[1]=="..")
+    return 3;
+  if(A[0]=="**"&&A[1]==".*")
+    return 4;
+  if(A[0]=="*."&&A[1]==".*")
+    return 5;
+  if(A[0]=="**"&&A[1]=="*.")
+    return 6;
+  if(A[0]=="**"&&A[1]=="**")
+    return 7;
+  if(A[0]=="*."&&A[1]=="**")
+    return 8;
+  if(A[0]==".*"&&A[1]=="*.")
+    return 9;
+  if(A[0]==".*"&&A[1]=="**")
+    return 0;
+}
+
 int main() {
   int D=-1;
   char L;
   while (D!=0) {
     std::cin >> D;
-    std::cout << D << '\n';
+  if(D!=0){
     std::cin >> L;
     if (L == 'S') {
       getchar();
@@ -83,9 +108,23 @@ int main() {
       }
 
     } else {
+      char A[D];
+      string B[D][3];
+      string aux;
+      int aux2;
+      for (int k = 0; k < 3; k++) {
+      for (int i = 0; i < D; i++) {
+        std::cin >> aux;
+        B[i][k]=aux;
+      }}
+      for (int i = 0; i < D; i++) {
+        aux2 = arabigo(B[i]);
+        std::cout << aux2;
+      }
+      std::cout << '\n';
 
-    }
+
+    }}
   }
-
   return 0;
 }
