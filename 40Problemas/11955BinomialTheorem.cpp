@@ -1,22 +1,46 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
 using namespace std;
 int F[51];
+int C[51][51];
 int factorial(int a){
   if(F[a]==0)
     F[a]= a*factorial(a-1);
   return F[a];
 }
 
-int C(int n, int k){
-  return (int)(factorial(n)/(factorial(k)*factorial(n-k)));
+
+int Combi(int n){
+  C[n][0]=1; C[n][n]=1;
+  if(n>0){
+    C[n][1]=n; C[n][n-1]=n;
+  }
+  if(n>4){
+  if (C[n-1][0]==1) {
+    for (int k = 2; k < n-2; k++){
+      C[n][k]= C[n-1][k-1] + C[n-1][k];
+    }
+  }else{
+    for (int k = 2; k < n-2; k++){
+      C[n][k]= (int)(factorial(n)/(factorial(k)*factorial(n-k)));
+    }
+  }
+  }
+}
+
+int Com(int n, int k){
+  if (C[n][0]!=1) {
+    Combi(n);
+  }
+  return C[n][k];
 }
 
 
 void bin(char* A, char* B, int p){
   int aux;
   for (int i = 0; i <= p; i++) {
-    aux = C(p, i);
+    aux = Com(p, i);
     if (aux!=1)
       std::cout << aux<<"*";
     if (i!=p) {
