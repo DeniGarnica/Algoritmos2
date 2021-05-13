@@ -2,24 +2,28 @@
 #include <cmath>
 #include <vector>
 using namespace std;
-int F[51];
-int C[51][51];
-int factorial(int a){
+typedef long long ll;
+ll F[51];
+ll C[51][51];
+ll factorial(int a){
   if(F[a]==0)
     F[a]= a*factorial(a-1);
   return F[a];
 }
 
-
-int Combi(int n){
+void Combi(int n){
   C[n][0]=1; C[n][n]=1;
   if(n>0){
     C[n][1]=n; C[n][n-1]=n;
   }
-  if(n>4){
+  if(n>3){
   if (C[n-1][0]==1) {
-    for (int k = 2; k < n-2; k++){
+    //std::cout << n << '\n';
+    for (int k = 2; k < n-1; k++){
+      //std::cout << "C["<< n-1<<"][" << k-1<<"]:"<< C[n-1][k-1] << '\n';
+      //std::cout << "C["<< n-1<<"][" << k<<"]:"<< C[n-1][k] << '\n';
       C[n][k]= C[n-1][k-1] + C[n-1][k];
+      //std::cout << "C["<< n<<"][" << k<<"]:"<< C[n][k] << '\n';
     }
   }else{
     for (int k = 2; k < n-2; k++){
@@ -29,7 +33,7 @@ int Combi(int n){
   }
 }
 
-int Com(int n, int k){
+ll Com(int n, int k){
   if (C[n][0]!=1) {
     Combi(n);
   }
@@ -38,7 +42,7 @@ int Com(int n, int k){
 
 
 void bin(char* A, char* B, int p){
-  int aux;
+  ll aux;
   for (int i = 0; i <= p; i++) {
     aux = Com(p, i);
     if (aux!=1)
@@ -69,6 +73,9 @@ int main(){
   }
   F[0]=1;
   F[1]=1;
+  for (int i = 0; i < 51; i++) { //Me di cuenta que es mas veloz crear en orden todo el triangulo de pascal
+    Combi(i);
+  }
 
   int n;
   string op;
@@ -100,7 +107,7 @@ int main(){
 
     std::cout << "Case "<< i+1 <<": ";
     bin(A, B, p);
-    if(i!=n-1)
+
       std::cout  << '\n';
     cont=0;
 
