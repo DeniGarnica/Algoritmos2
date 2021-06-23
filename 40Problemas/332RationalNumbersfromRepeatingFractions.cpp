@@ -28,8 +28,8 @@ int gcd(int a, int b)
 }
 
 void fraction(int k, int j, float x){
-  int a = ceil(pow(10, k+j)*x - pow(10, k)*x);
-  int b = pow(10, k+j)-pow(10, k);
+  int a = ceil(pow(10,j)*x* ceil(pow(10,j) - 1));
+  int b = pow(10, k)*(pow(10, j)-1);
   std::cout << "a: "<<a << '\n';
   std::cout << "b: "<<b << '\n';
   int d = gcd(a, b);
