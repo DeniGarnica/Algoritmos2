@@ -27,23 +27,26 @@ int gcd(int a, int b)
     return g;
 }
 
-void fraction(int k, int j, float x){
-  int a = ceil(pow(10,j)*x* ceil(pow(10,j) - 1));
-  int b = pow(10, k)*(pow(10, j)-1);
+void fraction(int k, int j, double x, double x2){
+  std::cout << pow(10,k+j)*x+x2  << '\n';
+  std::cout << pow(10,k)*x << '\n';
+  int a = ceil(pow(10,k+j)*x+x2 - pow(10,k)*x);
+  int b = ceil(pow(10, k)*(pow(10, j)-1));
   std::cout << "a: "<<a << '\n';
-  std::cout << "b: "<<b << '\n';
+  //std::cout << "b: "<<b << '\n';
   int d = gcd(a, b);
-  //a = int(a/d);
-  //b = int(b/d);
+  a = int(a/d);
+  b = int(b/d);
   std::cout << a<<"/"<<b << '\n';
 }
 
 int main(){
   int k, j, decimales, cont;
-  float x;
+  double x, x_2;
   char aux;
   string aux2;
   char A[9];
+  char B[9];
   int caso = 1;
   std::cin >> j;
   while (j!=-1) {
@@ -56,15 +59,17 @@ int main(){
       aux= getchar();
     }
     k=cont-j;
-    A[cont]='\0';
+    int l=0;
+    for (l = 0; l < j; l++) {
+      B[l]=A[cont-j+l];
+    }
+    B[l]='\0'; A[cont]='\0';
     x=float(stoi(A))/pow(10,cont);
+    x_2=float(stoi(B))/pow(10,j);
     cont=0;
-    /*while (A[cont]=='0') {
-      x = x/10;
-      cont++;
-    }*/
     std::cout << "Case "<< caso <<": ";
-    fraction(k, j, x);
+    std::cout  << '\n';
+    fraction(k, j, x, x_2);
     caso++;
     std::cin >> j;
   }
