@@ -30,7 +30,7 @@ int gcd(int a, int b)
 void fraction(int k, int j, double x, double x2){
   //std::cout << pow(10,k+j)*x+x2  << '\n';
   //std::cout << pow(10,k)*x << '\n';
-  int a = ceil(pow(10,k+j)*x+x2 - pow(10,k)*x);
+  int a = ceil(pow(10,k+j)*x+x2 - pow(10,k)*x-0.00001);
   int b = ceil(pow(10, k)*(pow(10, j)-1));
   //std::cout << "a: "<<a << '\n';
   //std::cout << "b: "<<b << '\n';
@@ -45,8 +45,8 @@ int main(){
   double x, x_2;
   char aux;
   string aux2;
-  char A[9];
-  char B[9];
+  char A[10];
+  char B[10];
   int caso = 1;
   std::cin >> j;
   while (j!=-1) {
@@ -67,26 +67,28 @@ int main(){
     }
     B[l]='\0'; A[cont]='\0';
     //std::cout << B << '\n';
-    std::cout << A << '\n';
+    //std::cout << A << '\n';
 
     x=float(stoi(A))/pow(10,cont);
-    if(j>0 && j<9)//Falta cuando j=9
+    if(j>0 && j<9)
       x_2=float(stoi(B))/pow(10,j);
     if(j==0)
       x_2=0;
     if(j==9)
         x_2=x;
-
     cont=0;
     std::cout << "Case "<< caso <<": ";
     //std::cout  << '\n';
     if(j==0){
-      int a = ceil(x*pow(10,k));
+      int a = ceil(x*pow(10,k)-0.00001);
       int b = ceil(pow(10,k));
       int d = gcd(a, b);
+      //std::cout << "a: "<<a << '\n';
+      //std::cout << "b: "<<b << '\n';
       a = int(a/d);
       b = int(b/d);
-      std::cout << a<<"/"<<b << '\n';
+
+      std::cout << a<<"/"<< b << '\n';
     }else{
       fraction(k, j, x, x_2);
     }
