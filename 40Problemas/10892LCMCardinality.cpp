@@ -5,7 +5,7 @@
 using namespace std;
 typedef long long ll;
 
-ll p[150001];
+ll p[150001]; //guarda primos en orden
 bool A[150001];
 
 ll gcd(ll a, ll b){
@@ -33,11 +33,15 @@ ll gcd(ll a, ll b){
 void primos(){
   ll cont = 0;
   for (size_t i = 2; i < 150001; i++) {
-    if(!A[i])
-      p[cont++]=i;
+    //std::cout << "i: "<< i << '\n';
+    if(!A[i]){ //si no es compuesto
+      p[cont]=i;
+      cont++;
+    }
     for(ll j = 0; j < cont && p[j]*i<150001; j++){
-      A[i*p[j]] = 1;
-      if (i%p[j]==0)
+      //std::cout << "i*p[j]: "<<i*p[j] << '\n';
+      A[i*p[j]] = 1; // a los compuestos de los primos hasta ahora generados les asigna 1
+      if (i%p[j]==0) //Si llegamos al mismo numero o su potencia 
         break;
     }
   }
@@ -49,9 +53,6 @@ ll descomposicion(int n){
 
 int main(){
   primos();
-  for (size_t i = 0; i < 100; i++) {
-    std::cout << p[i] << '\n';
-  }
   ll n;
   std::cin >> n;
   while (n!=0) {
