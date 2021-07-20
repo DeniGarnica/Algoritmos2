@@ -1,9 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include <string>
-#include <vector>
 using namespace std;
-
 
 int main(){
 int largo,ancho, q, L, U, maxSize;
