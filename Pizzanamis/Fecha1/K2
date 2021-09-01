@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+string K[100];
+string* rec(int k, string & c){
+  if (k==0){
+    return;
+  }
+  if (k==1){
+    K[1]="2";
+    std::cout << "2";
+    return;
+  }
+  if(k==2){
+    K[2]="(2)^2";
+    std::cout << "(2)^2";
+    return;
+  }
+  if(k>1 && k%2==1){
+    std::cout << "(2*";
+    if(k-1<100 && k-1!=0 && K[k-1]=="0"){
+      K[k-1]= rec(k-1, c);
+    }else{
+      if(k-1!=0)
+        std::cout << K[k-1] << '\n';
+    }
+    std::cout << ")";
+     return;
+  }
+  if(k>2 && k%2==0){
+    std::cout << "(";
+    if(k/2<100 &&k/2!=0 && K[k/2]=="0"){
+      K[k/2]= rec(k/2, c);
+    }else{
+      if(k/2!=0)
+        std::cout << K[k/2] << '\n';
+    }
+    std::cout << ")^2";
+     return;
+  }
+}
+
+int main(){
+  int t,k;
+  std::cin >> t;
+  for (int j = 0; j < 100; j++) {
+    K[j]="0";
+  }
+  for (int i = 0; i < t; i++) {
+    std::cin >> k;
+    rec(k);
+    std::cout << '\n';
+  }
+    return 0;
+  }
