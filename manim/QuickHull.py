@@ -1,20 +1,28 @@
 from manim import *
 from itertools import cycle
+import numpy as np
 config.frame_width = 35
 config.frame_height = 20
 
-def dist_linea(dot1, dot2, dot3):
+def swapPositions(list, pos1, pos2):
+    list[pos1], list[pos2] = list[pos2], list[pos1]
+    return list
+
+def distancia(dot1, dot2):
+    return np.sqrt((dot1[0]-dot2[0])**2+(dot1[1]-dot2[1])**2) #Distancia entre dos puntos
+
+def dist_linea(dot1, dot2, dot3): #distancia de la recta formada por los primeros dos puntos y el tercer punto
   return abs((dot3[1]-dot1[1])*(dot2[0]-dot1[0]) - (dot2[1]-dot1[1])*(dot3[0]-dot1[0]))
 
-def Lado(dot1, dot2, dot3):
+def Lado(dot1, dot2, dot3): #Nos dice si un punto esta del lado izquierdo o derecho de los otros dos, tomando la direccion del punto 1 hacia el 2
   aux = (dot3[1]-dot1[1])*(dot2[0]-dot1[0]) - (dot2[1]-dot1[1])*(dot3[0]-dot1[0])
-  if aux>0:
+  if aux>0: #Se encuentra a la izquierda
     return 1
-  if aux<0:
+  if aux<0: #Se encuentra a la derecha
     return -1
-  return 0
+  return 0 #Son colineales
 
-def puntomaslejano(dot1, dot2, dots, lado):
+def puntomaslejano(dot1, dot2, dots, lado): #Nos dice quien es el punto mas lejano de una recta
   dist_max = dist_linea(dot1, dot2, dot1)
   iter = 2
   max_iter=-1
@@ -42,6 +50,7 @@ def Quickhull(dots):
   hull.sort()
   return hull
 
+
 class Sq(Scene):
     def construct(self):
         dots = [[0,0,0],[-2,-3,0],[-5,-5,0],[-2,-4,0],[-1,-1,0],[-1,1,0],[0,-2,0],[1,2,0],[1,-3,0],[1,-5,0],[2,0,0],[2,-2,0],[3,3,0],[3,-1,0],[3,-2,0],[3,-4,0],[3,-5,0],[4,1,0],[4,-3,0],[4,-6,0],[5,-2,0],[5,-5,0]]
@@ -50,6 +59,9 @@ class Sq(Scene):
             self.add(Dot(i))
         it_dots =iter(dots)
         hull = Quickhull(dots)
+        hull.sort(key=lambda x: (-np.arctan2(x[1], x[0])))
+        hull.insert(0,hull[len(hull)-1])
+        hull.pop()
         print(hull)
         for idx, elem in enumerate(hull):
             thisel = elem
