@@ -12,28 +12,46 @@ def Lado(dot1, dot2, dot3): #Nos dice si un punto esta del lado izquierdo o dere
     return -1
   return 0 #Son colineales
 
-def GS_up(dots):
+def GS_up(dots, self):
   n = len(dots)
   hull = [dots[0]]
   d1 = dots[0]
   d2 = dots[1]
   d3 = dots[2]
+  line = []
+  line.append(Line(dots[0], dots[1]).set_color(GRAY))
+  self.play(Create(line[0]))
+  line.append(Line(dots[1], dots[2]).set_color(GRAY))
+  self.play(Create(line[1]))
   hull.append(d2)
   iter = 1
   for i in range(n-2):
     if Lado(d1, d2, d3) >= 0:
+
+      self.remove(line[iter-1])
+      self.remove(line[iter])
       hull.pop()
       d2 = d3
       hull.append(d2)
       iter = iter + 1
       d3 = dots[iter]
+      line[iter-1] = Line(d1, d2).set_color(GRAY)
+      self.play(Create(line[iter-1]))
+      line.append(Line(d2, d3).set_color(GRAY))
+      self.play(Create(line[iter]))
       if len(hull)>=3:
         d0 = hull[len(hull)-3]
         while Lado(d0, d1, d2) >= 0 and len(hull)>=3:
           hull.pop()
           hull.pop()
+          self.remove(line[iter-1])
+          self.remove(line[iter])
           d1 = d0
           hull.append(d2)
+          line[iter-1] = Line(d1, d2).set_color(RED)
+          self.play(Create(line[iter-1]))
+          line[iter] = Line(d2, d3).set_color(RED)
+          self.play(Create(line[iter]))
           if len(hull)>=3:
             d0 = hull[len(hull)-3]
 
@@ -44,6 +62,8 @@ def GS_up(dots):
       d2 = d3
       iter = iter+1
       d3 = dots[iter]
+      line.append(Line(d2, d3).set_color(GRAY))
+      self.play(Create(line[iter]))
 
   if Lado(d1, d2, d3) >= 0:
       hull.pop()
@@ -61,7 +81,7 @@ def GS_up(dots):
 
   return hull
 
-def GS_down(dots, hull):
+def GS_down(dots, hull, self):
   n = len(dots)
   d1 = dots[n-1]
   d2 = dots[n-2]
@@ -121,8 +141,11 @@ class Sq(Scene):
         for i in dots:
             self.add(Dot(i))
         it_dots =iter(dots)
-        hull = GS_up(dots)
-        GS_down(dots, hull)
+        if len(dots)>=4:
+            hull = GS_up(dots, self)
+            GS_down(dots, hull, self)
+        else:
+            hull = dots
         for idx, elem in enumerate(hull):
             thisel = elem
             nextel = hull[(idx + 1) % len(hull)]
