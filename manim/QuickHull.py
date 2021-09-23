@@ -22,7 +22,7 @@ def Lado(dot1, dot2, dot3): #Nos dice si un punto esta del lado izquierdo o dere
     return -1
   return 0 #Son colineales
 
-def puntomaslejano(dot1, dot2, dots, lado): #Nos dice quien es el punto mas lejano de una recta
+def puntomaslejano(dot1, dot2, dots, lado, self): #Nos dice quien es el punto mas lejano de una recta
   dist_max = dist_linea(dot1, dot2, dot1)
   iter = 2
   max_iter=-1
@@ -33,23 +33,38 @@ def puntomaslejano(dot1, dot2, dots, lado): #Nos dice quien es el punto mas leja
     iter=iter+1
   return max_iter
 
-def qh(dots, dot1, dot2, lado, hull):
-  nuevo = puntomaslejano(dot1, dot2, dots, lado)
+def qh(dots, dot1, dot2, lado, hull, self):
+  nuevo = puntomaslejano(dot1, dot2, dots, lado, self)
   if nuevo == -1:
     return
+  line = Line(dot1, dot2).set_color(GRAY)
+  self.play(Create(line))
+  d = Dot(dots[nuevo]).set_color(RED)
+  self.add(d)
+  line2 = Line(dot1, dots[nuevo]).set_color(GRAY)
+  self.play(Create(line2))
+  line3 = Line(dot2, dots[nuevo]).set_color(GRAY)
+  self.play(Create(line3))
   hull.append(dots[nuevo])
-  qh(dots, dots[nuevo], dot1, -Lado(dot1, dot2, dots[nuevo]), hull)
-  qh(dots, dots[nuevo], dot2, -Lado(dot2, dot1, dots[nuevo]), hull)
 
-def Quickhull(dots):
+  qh(dots, dots[nuevo], dot1, -Lado(dot1, dot2, dots[nuevo]), hull, self)
+  qh(dots, dots[nuevo], dot2, -Lado(dot2, dot1, dots[nuevo]), hull, self)
+
+def Quickhull(dots, self):
   dots.sort()
   n= len(dots)
   hull = [dots[0], dots[n-1]] #agregamos los puntos en los extremos
-  qh(dots, dots[0], dots[n-1], 1, hull)
-  qh(dots, dots[0], dots[n-1], -1, hull)
+  self.wait(1)
+  d = Dot(dots[0]).set_color(RED)
+  self.add(d)
+  self.wait(1)
+  d2 = Dot(dots[n-1]).set_color(RED)
+  self.add(d2)
+  qh(dots, dots[0], dots[n-1], 1, hull, self)
+  qh(dots, dots[0], dots[n-1], -1, hull, self)
   hull.sort()
-  return hull
 
+  return hull
 
 class Sq(Scene):
     def construct(self):
@@ -58,10 +73,13 @@ class Sq(Scene):
         for i in dots:
             self.add(Dot(i))
         it_dots =iter(dots)
-        hull = Quickhull(dots)
-        hull.sort(key=lambda x: (-np.arctan2(x[1], x[0])))
-        hull.insert(0,hull[len(hull)-1])
-        hull.pop()
+        if len(dots)>=4:
+            hull = Quickhull(dots, self)
+            hull.sort(key=lambda x: (-np.arctan2(x[1], x[0])))
+            hull.insert(0,hull[len(hull)-1])
+            hull.pop()
+        else:
+            hull = dots
         print(hull)
         for idx, elem in enumerate(hull):
             thisel = elem

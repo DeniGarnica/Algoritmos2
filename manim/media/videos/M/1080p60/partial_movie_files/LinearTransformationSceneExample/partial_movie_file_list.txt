@@ -1,0 +1,8 @@
+# This file is used internally by FFMPEG.
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/M/1080p60/partial_movie_files/LinearTransformationSceneExample/2724770537_3903909551_1179343693.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/M/1080p60/partial_movie_files/LinearTransformationSceneExample/2324426137_966298402_2987759774.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/M/1080p60/partial_movie_files/LinearTransformationSceneExample/2324426137_2967158778_3325607658.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/M/1080p60/partial_movie_files/LinearTransformationSceneExample/2324426137_3837594947_2445786292.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/M/1080p60/partial_movie_files/LinearTransformationSceneExample/2324426137_1760127822_2831108593.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/M/1080p60/partial_movie_files/LinearTransformationSceneExample/2324426137_1848792401_3100720957.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/M/1080p60/partial_movie_files/LinearTransformationSceneExample/2324426137_398514950_485963966.mp4'

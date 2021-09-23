@@ -1,0 +1,8 @@
+# This file is used internally by FFMPEG.
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/GrahamScan2/1080p60/partial_movie_files/Sq/2221814960_4137175377_231228844.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/GrahamScan2/1080p60/partial_movie_files/Sq/3448881135_963682800_1664081713.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/GrahamScan2/1080p60/partial_movie_files/Sq/3448881135_4234828948_735357347.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/GrahamScan2/1080p60/partial_movie_files/Sq/3448881135_3875139749_995484194.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/GrahamScan2/1080p60/partial_movie_files/Sq/3448881135_2769219373_1691370379.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/GrahamScan2/1080p60/partial_movie_files/Sq/3448881135_1061796509_3610096968.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/GrahamScan2/1080p60/partial_movie_files/Sq/3448881135_1336854823_2484851501.mp4'

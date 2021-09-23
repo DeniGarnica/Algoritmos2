@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/scene/1080p60/partial_movie_files/SquareToCircle/450974505_3657829316_757503665.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/scene/1080p60/partial_movie_files/SquareToCircle/34786186_2154936208_757503665.mp4'
+file 'file:C:/Users/52493/github/Algoritmos2/manim/media/videos/scene/1080p60/partial_movie_files/SquareToCircle/34786186_3434358423_757503665.mp4'
