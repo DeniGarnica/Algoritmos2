@@ -1,24 +1,51 @@
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
-#define MAX 1000
+#define MAX 100000
 
 int tree[MAX] = {0}; // Para almacenar el Segment Tree
-int lazy[MAX] = {0}; // Para almacenar updates pendientes
+int lazy[MAX] = {0}; // Para almacenar updates pendientes, existen 3 tipos de update
 
 //Este es un SegmentTree con Lazzy Propagation, el cual nos da la suma de los valores de un rango dado
+//Esta funcion actualiza el intervalo suponiendo que esta completamente contenido.
+int update(int rango_size, int cambio, int v_actual){
+
+  if(cambio == 3) //Si cambio == 3, cambia todos los del rango a 0
+      return 0;
+
+  if(cambio == 1) //Si cambio == 1, cambia a todos los del rango a 1
+      return rango_size;
+
+  if(cambio == 2) //Si cambio == 2, intercambia los valores
+      return rango_size - v_actual;
+}
+
+int combinar_updates(int cambio_n, int  lazy_actual){
+ //Solo nos importa el anterior si el nuevo es un intercambio
+  if(lazy_actual == 2 && cambio_n == 2) //Si nos pide intercambiar valores 2 veces, es lo mismo a no tener nada pendiente
+      return 0;
+
+  if(lazy_actual == 1 && cambio_n == 2) //Si nos pide intercambiar y previamente nos pedia estar en 1
+      return 3;
+
+  if(lazy_actual == 3 && cambio_n == 2) //Si nos pide intercambiar y previamente nos pedia estar en 3
+      return 1;
+  //Si el nuevo no es un intercambio solo ponemos el mismo numero
+  return cambio_n; //Si nos pide cambiar a otro numero, solo lo hacemos
+}
+
 
 /* actual: inidice del nodo actual  en el segment tree
 [a_l, a_r]: es el intervalo en el que nos encontramos actualmente
 [update_l, update_r] es el intervalo que vamos a actualizar
-diff: lo que se va a sumar al intervalo [update_l, update_r] */
-void updateRangeUtil(int actual, int a_l, int a_r, int update_l, int update_r, int diff){
+cambio: la operacion que se va a realizar al intervalo [update_l, update_r] */
+void updateRangeUtil(int actual, int a_l, int a_r, int update_l, int update_r, int cambio){
 	if (lazy[actual] != 0){ //Si hay updates pendientes, los realizamos
-    		tree[actual] += (a_r-a_l+1)*lazy[actual];
+    		tree[actual] = update(a_r-a_l+1, lazy[actual], tree[actual]);
     		if (a_l != a_r){ //Si no es un nodo hoja
-        			// Posponemos la informacion a los hijos
-        			lazy[actual*2 + 1] += lazy[actual];
-        			lazy[actual*2 + 2] += lazy[actual];
+        			// Posponemos la informacion a los hijos combinando lo nuevo que se paso con lo que ya tenia
+        			lazy[actual*2 + 1] = combinar_updates(lazy[actual], lazy[actual*2 + 1]);
+        			lazy[actual*2 + 2] = combinar_updates(lazy[actual], lazy[actual*2 + 2]);
     		}
     		lazy[actual] = 0; //Al haber actualizado el actual, no tiene nada pendiente
 	}
@@ -28,110 +55,81 @@ void updateRangeUtil(int actual, int a_l, int a_r, int update_l, int update_r, i
 
 	//Si el rango esta completamente contenido
 	if (a_l>=update_l && a_r<=update_r){
-    		tree[actual] += (a_r-a_l+1)*diff; //Modificamos el nodo actual
+    		tree[actual] = update(a_r-a_l+1, cambio, tree[actual]); //Modificamos el nodo actual
     		if (a_l != a_r){ //Si no es nodo hoja
         			// Posponemos la informacion a los hijos
-        			lazy[actual*2 + 1] += diff;
-        			lazy[actual*2 + 2] += diff;
+        			lazy[actual*2 + 1] = combinar_updates(cambio, lazy[actual*2 + 1]);
+        			lazy[actual*2 + 2] = combinar_updates(cambio, lazy[actual*2 + 2]);
     		}
     		return;
 	}
 
 	//Si solo esta el rango parcialmente contenido, pasamos a los hijos
 	int mid = (a_l+a_r)/2;
-	updateRangeUtil(actual*2+1, a_l, mid, update_l, update_r, diff);
-	updateRangeUtil(actual*2+2, mid+1, a_r, update_l, update_r, diff);
+	updateRangeUtil(actual*2+1, a_l, mid, update_l, update_r, cambio);
+	updateRangeUtil(actual*2+2, mid+1, a_r, update_l, update_r, cambio);
 
 	//Con los hijos actualizados, calcular el resultado de estos y actualizar a este nodo.
 	tree[actual] = tree[actual*2+1] + tree[actual*2+2];
 }
 
 //Actualiza el rango usando la funcion anterior
-void updateRange(int n, int update_l, int update_r, int diff){
-    updateRangeUtil(0, 0, n-1, update_l, update_r, diff);
+void updateRange(int n, int update_l, int update_r, int cambio){
+    updateRangeUtil(0, 0, n-1, update_l, update_r, cambio);
 }
 
 
-/* A recursive function to get the sum of values in given
-	range of the array. The following are parameters for
-	this function.
-	si --> Index of current node in the segment tree.
-		Initially 0 is passed as root is always at'
-		index 0
-	ss & se --> Starting and ending indexes of the
-				segment represented by current node,
-				i.e., tree[si]
-	qs & qe --> Starting and ending indexes of query
-				range */
-int getSumUtil(int ss, int se, int qs, int qe, int si)
-{
-	// If lazy flag is set for current node of segment tree,
-	// then there are some pending updates. So we need to
-	// make sure that the pending updates are done before
-	// processing the sub sum query
-	if (lazy[si] != 0)
-	{
-		// Make pending updates to this node. Note that this
-		// node represents sum of elements in arr[ss..se] and
-		// all these elements must be increased by lazy[si]
-		tree[si] += (se-ss+1)*lazy[si];
+/* Nos da la cantidad de unos en un intervalo
+actual: inidice del nodo actual  en el segment tree
+[a_l, a_r]: es el intervalo en el que nos encontramos actualmente, ie tree[actual]
+[update_l, update_r] es el intervalo del query
+cambio: la operacion que se va a realizar al intervalo [update_l, update_r] */
+int getSumUtil(int a_l, int a_r, int q_l, int q_r, int actual){
+	if (lazy[actual] != 0){ //Si hay updates pendientes los realiza
+		tree[actual] = update(a_r-a_l+1, lazy[actual], tree[actual]);
 
-		// checking if it is not leaf node because if
-		// it is leaf node then we cannot go further
-		if (ss != se)
-		{
-			// Since we are not yet updating children os si,
-			// we need to set lazy values for the children
-			lazy[si*2+1] += lazy[si];
-			lazy[si*2+2] += lazy[si];
+		if (a_l != a_r){ //Si no es un nodo hoja
+      //Posponemos a los hijos
+			lazy[actual*2+1] = combinar_updates(lazy[actual], lazy[actual*2 + 1]);
+			lazy[actual*2+2] = combinar_updates(lazy[actual], lazy[actual*2 + 2]);
 		}
 
-		// unset the lazy value for current node as it has
-		// been updated
-		lazy[si] = 0;
+		lazy[actual] = 0; //Al haber actualizado el actual, no tiene nada pendiente
 	}
 
-	// Out of range
-	if (ss>se || ss>qe || se<qs)
+	if (a_l>a_r || a_r>q_r || a_r<q_l) //Si esta fuera del rango
 		return 0;
 
-	// At this point we are sure that pending lazy updates
-	// are done for current node. So we can return value
-	// (same as it was for query in our previous post)
+	// Si el rango esta contenido
+	if (a_l>=q_l && a_r<=q_r)
+		return tree[actual];
 
-	// If this segment lies in range
-	if (ss>=qs && se<=qe)
-		return tree[si];
-
-	// If a part of this segment overlaps with the given
-	// range
-	int mid = (ss + se)/2;
-	return getSumUtil(ss, mid, qs, qe, 2*si+1) +
-		getSumUtil(mid+1, se, qs, qe, 2*si+2);
+	// Si no todo el rango esta contenido
+	int mid = (a_l + a_r)/2;
+	return getSumUtil(a_l, mid, q_l, q_r, 2*actual+1) + getSumUtil(mid+1, a_r, q_l, q_r, 2*actual+2);
 }
 
-// Return sum of elements in range from index qs (query
-// start) to qe (query end). It mainly uses getSumUtil()
-int getSum(int n, int qs, int qe){
-	// Check for erroneous input values
-	if (qs < 0 || qe > n-1 || qs > qe)
-	{
+
+int getSum(int n, int q_l, int q_r){
+	// Revisa errores
+	if (q_l < 0 || q_r > n-1 || q_l > q_r){
 		printf("Invalid Input");
 		return -1;
 	}
 
-	return getSumUtil(0, n-1, qs, qe, 0);
+	return getSumUtil(0, n-1, q_l, q_r, 0);
 }
 
 // Construye el ST dado un arreglo, un intervalo y el indice del nodo actual
-void constructSTUtil(int arr[], int a_l, int a_r, int actual){
+void constructSTUtil(string arr, int a_l, int a_r, int actual){
 	// out of range as ss can never be greater than se
 	if (a_l > a_r) //Si se sale del rango
 		return ;
 
   //Si el intervalo es de tamanio 1, acomoda las hojas
 	if (a_l == a_r){
-		tree[actua] = int(arr[a_l]);
+		tree[actual] = int(arr[a_l])-int('0');
+    //std::cout << "tree["<<a_l<< "]: "<< tree[actual] << '\n';
 		return;
 	}
 
@@ -144,10 +142,31 @@ void constructSTUtil(int arr[], int a_l, int a_r, int actual){
 }
 
 //Construye todo el ST usando la funcion anterior
-void constructST(int arr[], int n){
+void constructST(string arr, int n){
 	constructSTUtil(arr, 0, n-1, 0);
 }
 
+void imprime(){
+  std::cout << tree[0] << '\n';
+  std::cout << tree[1]<<" "<<tree[2] << '\n';
+  for (int i = 0; i < 4; i++)
+    std::cout << tree[3+i] << " ";
+  std::cout  << '\n';
+//  for (int i = 0; i < 8; i++)
+  //  std::cout << tree[7+i] << " ";
+//  std::cout  << '\n';
+}
+
+void imprimeLazy(){
+  std::cout << lazy[0] << '\n';
+  std::cout << lazy[1]<<" "<<lazy[2] << '\n';
+  for (int i = 0; i < 4; i++)
+    std::cout << lazy[3+i] << " ";
+  std::cout  << '\n';
+//  for (int i = 0; i < 8; i++)
+//    std::cout << lazy[7+i] << " ";
+  //std::cout  << '\n';
+}
 
 int main(){
   ios_base::sync_with_stdio(false);
@@ -168,6 +187,12 @@ int main(){
       }
       int n = cadena.length();
       constructST(cadena, n);
+      std::cout << "inicial" << '\n';
+      imprime();
+
+      /*for (int k = 0; k < 10; k++) {
+        std::cout << "tree: "<< tree[k] << '\n';
+      }*/
 
       int num_operaciones;
       std::cin >> num_operaciones;
@@ -178,20 +203,37 @@ int main(){
           int l, r;
           std::cin >> l >> r;
           if(operacion == 'F'){
-
-          }
+              updateRange(n, l, r, 1);
+              std::cout << "tree F" << '\n';
+              imprime();
+              std::cout << "Lazy" << '\n';
+              imprimeLazy();
+            }
 
           if(operacion == 'E'){
-
-          }
+              updateRange(n, l, r, 3);
+              std::cout << "tree E" << '\n';
+              imprime();
+              std::cout << "Lazy" << '\n';
+              imprimeLazy();
+            }
 
           if(operacion == 'I'){
-
-          }
+              updateRange(n, l, r, 2);
+              std::cout << "tree I" << '\n';
+              imprime();
+              std::cout << "Lazy" << '\n';
+              imprimeLazy();
+            }
 
           if(operacion == 'S'){
+              std::cout << getSum(n, l, r) << '\n';
+              std::cout << "tree S" << '\n';
+              imprime();
+              std::cout << "Lazy" << '\n';
+              imprimeLazy();
+            }
 
-          }
       }
   }
 	return 0;
