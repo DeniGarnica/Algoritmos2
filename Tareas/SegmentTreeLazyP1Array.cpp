@@ -1,12 +1,12 @@
 #include <iostream>
-#include <vector>
 using namespace std;
 #define ll long long
-#define MAX (int)1e6
+#define MAX 1000000
 
-vector<int>tree; // Para almacenar el Segment Tree
-vector<int>lazy; // Para almacenar updates pendientes, existen 3 tipos de update
-
+int tree[4*MAX]; // Para almacenar el Segment Tree
+int lazy[4*MAX]; // Para almacenar updates pendientes, existen 3 tipos de update
+memset(tree,0,4*MAX);
+memset(lazy,0,4*MAX);
 //Este es un SegmentTree con Lazzy Propagation, el cual nos da la suma de los valores de un rango dado
 //Esta funcion actualiza el intervalo suponiendo que esta completamente contenido.
 int update(int rango_size, int cambio, int v_actual){
@@ -126,22 +126,18 @@ void constructSTUtil(string arr, int a_l, int a_r, int actual){
 
   //Si el intervalo es de tamanio 1, acomoda las hojas
 	if (a_l == a_r){
-    tree.push_back(0);
-    lazy.push_back(0);
 		tree[actual] = int(arr[a_l])-int('0');
     //std::cout << "tree["<<a_l<< "]: "<< tree[actual] << '\n';
 		return;
 	}
 
 	// Si es de tamanio mayor a uno, va a los hijos
-  tree.push_back(0);
-  lazy.push_back(0);
 	int mid = (a_l + a_r)/2;
-  std::cout << tree.size() << '\n';
 	constructSTUtil(arr, a_l, mid, actual*2+1);
 	constructSTUtil(arr, mid+1, a_r, actual*2+2);
 
 	tree[actual] = tree[actual*2 + 1] + tree[actual*2 + 2];
+  lazy[actual] = 0;
 }
 
 //Construye todo el ST usando la funcion anterior
@@ -152,8 +148,6 @@ void constructST(string arr, int n){
 int main(){
   ios_base::sync_with_stdio(false);
   cin.tie(0);
-  tree.reserve(4*MAX);
-  lazy.reserve(4*MAX);
   int num_casos;
   std::cin >> num_casos;
   for(int i = 0; i < num_casos; i++){
