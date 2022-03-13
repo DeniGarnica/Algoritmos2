@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-using namespace std;
 
 struct _Node {
   long long x, p, cnt; //x:clave, p: prioridad, cnt: elementos en subarbol

@@ -161,7 +161,6 @@ int main(){
     SplitByValue(root, var, l, r);
     root = merge(l, merge(n0, r));
   }
-  //printArbol(root,0);
   int k;
   std::cin >> k;
   std::cout << find_k(root,k) << '\n';

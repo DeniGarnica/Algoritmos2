@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-using namespace std;
 
 struct _Node{
   long long x, cnt;
@@ -132,10 +131,10 @@ void eraseInPosition(Node arbol, long long pos){
 int main(){
   Node root = NULL;
   //Node n9 = new _Node(6);
-  Node n0 = new _Node(11);
-  Node n1 = new _Node(21);
-  Node n2 = new _Node(35);
-  Node n3 = new _Node(43);
+  Node n0 = new _Node(8);
+  Node n1 = new _Node(20);
+  Node n2 = new _Node(5);
+  Node n3 = new _Node(3);
   Node n4 = new _Node(56);
   Node n5 = new _Node(67);
   Node n6 = new _Node(86);
