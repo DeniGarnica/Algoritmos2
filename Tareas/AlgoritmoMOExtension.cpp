@@ -15,19 +15,18 @@ std::vector<int> eulerTour;
 int alturas[MAX]; //Guarda las alturas de cada nodo
 int prim_visita[MAX]; //Marca la 1a visita en el euler Tour
 int first[MAX]; //Dice la 1er visita en el DFS
-int last[MAX];
+int last[MAX];  //Dice la ultima visita en el DFS
 int cantidades[5005] = {0}; //Nos guarda cuantas veces aparece cada numero
 bool process[MAX]; //Nos almacena si ya esta o no metido el nodo
-int orden[MAX]; //Tendra el orden de los nodos en el arbol linealizado
-int block;
-int ST[4*MAX][int(log(4*MAX))];
-Query Q2[MAX];
-int LCAs[MAX];
+int block; //Tamanio de las clases
+int ST[4*MAX][int(log(4*MAX))]; //Sparse table
+std::pair<Query, std::pair<int, int>> Q2[MAX]; //Guarda las queries, su orden original y su respuesta
+int LCAs[MAX]; //Guarda los LCAs
 int currRes;
 
 
 void DFS(int v){
-    visitados[v] = 1;
+    visitados[v] = 1; //Marca si esta visitado para la DFS
     prim_visita[v] = eulerTour.size();
     first[v] = arbolDFS.size();
     arbolDFS.push_back(v);
@@ -52,18 +51,21 @@ void construye_STable(int n){
       ST[i][0] = eulerTour[i];
 
   //Creamos el resto de la tabla
-  for (int j = 1; (1 << j) <= n; j++) {
-      for (int i = 0; (i + (1 << j) - 1) < n; i++) {
-          if (alturas[ST[i][j - 1]] < alturas[ST[i + (1 << (j - 1))][j - 1]])
-                  ST[i][j] = ST[i][j - 1];
-          else
-                  ST[i][j] = ST[i + (1 << (j - 1))][j - 1];
-          }
+  for (int j = 1; j <= log(n)+1; j++)
+    for (int i = 0; i + (1 << j) <= n; i++){
+      //Compara las alturas pero ingresa los nodos
+        if(alturas[ST[i][j-1]] < alturas[ST[i + (1 << (j - 1))][j - 1]]){
+          ST[i][j] = ST[i][j-1];
+        }else{
+          ST[i][j] = ST[i + (1 << (j - 1))][j - 1];
+        }
       }
 }
 
 int LCA(int a, int b){
   //Vemos en donde esta guardado en el Euler tour cada nodo
+  if(a == b)
+    return a;
   int L = prim_visita[a];
   int R = prim_visita[b];
   if(L > R){
@@ -71,13 +73,13 @@ int LCA(int a, int b){
     L = prim_visita[b];
   }
 
-  int j = (int)log2(R - L + 1);
+  int j = (int)log(R - L + 1);
 
-  if (ST[L][j] <= ST[R - (1 << j) + 1][j])
-        return ST[L][j];
-
-  else
-        return ST[R - (1 << j) + 1][j];
+  //Como no nos importan las intersecciones en una ST de minimos
+  if (alturas[ST[L][j+1]] < alturas[ST[R-L+j][j+1]]){
+        return ST[L][j+1];
+  }else{
+        return ST[R-L+j][j+1];}
 }
 
 void agrega(int n){
@@ -102,75 +104,84 @@ void agrega(int n){
   }
 }
 
-
-bool ordena_visita(int a, int b){
-  return prim_visita[a] < prim_visita[b];
-}
-
-bool ordena_q(Query x, Query y){
+bool ordena_q(std::pair<Query, std::pair<int, int>>  x, std::pair<Query, std::pair<int, int>>  y){
     //Ordena por bloques primero
-    if (floor(x.L/block) != floor(y.L/block))
-        return x.L/block < y.L/block;
+    if (x.first.L/block != y.first.L/block)
+        return x.first.L/block < y.first.L/block;
 
     //Si estan en el mismo bloque ordena por el valor de R
-    return x.R < y.R;
+    return x.first.R < y.first.R;
 }
 
+//Reordena para la impresion
+bool ordena_print(std::pair<Query, std::pair<int, int>>  x, std::pair<Query, std::pair<int, int>>  y){
+
+    return (x.second).first < (y.second).first;
+}
+
+//Calcula las queries una vez ordenadas
 void queryResults(int N, int Q){
 
-    //std::cout << typeid(Q2[0].L).name() << '\n';
     // Inicializamos L, R y la respuesta actual
-    int currL = Q2[0].L, currR = Q2[0].R;
+    int currL = Q2[0].first.L, currR = Q2[0].first.R;
     int maxi = 0; int mini = 6000;
     for (int i = currL; i < currR + 1; i++)
       agrega(arbolDFS[i]);
 
-    int LCa = LCA(arbolDFS[Q2[0].L], arbolDFS[Q2[0].R]);
-    if(LCa != Q2[0].L && LCa != Q2[0].L)
+    int LCa = LCA(arbolDFS[Q2[0].first.L], arbolDFS[Q2[0].first.R]);
+
+    if(LCa != Q2[0].first.L && LCa != Q2[0].first.L)
         agrega(LCa);
 
-    std::cout << "Query ("<<Q2[0].L<<", "<<Q2[0].R<<") = "<< currRes << '\n';
+    (Q2[0].second).second = currRes;
 
-    if(LCa != Q2[0].L && LCa != Q2[0].L)
+
+    if(LCa != Q2[0].first.L && LCa != Q2[0].first.L){
         agrega(LCa);
+    }
+
+
 
     // Recorremos las queries
     for (int i = 1; i < Q; i++){
-
         // Quitamos lo que no es necesario en la query
-        while (currL < Q2[i].L){
-            //std::cout << "c1 agrega nodo "<< currL+1 << '\n';
-            agrega(arbolDFS[currL+1]);
+        while (currL < Q2[i].first.L){
+            agrega(arbolDFS[currL]);
             currL++;
         }
 
         // Agregamos los elementos de la izquierda
-        while (currL > Q2[i].L){
-            //std::cout << "c2 agrega nodo "<< currL-1 << '\n';
+        while (currL > Q2[i].first.L){
             agrega(arbolDFS[currL-1]);
             currL--;
         }
 
-        while (currR < Q2[i].R){
-            //std::cout << "c3 agrega nodo "<< currR+1 << '\n';
+        while (currR < Q2[i].first.R){
             agrega(arbolDFS[currR+1]);
             currR++;
         }
 
-        while (currR > Q2[i].R){
-            //std::cout << "c4 agrega nodo "<< currR-1 << '\n';
-            agrega(arbolDFS[currR-1]);
+        while (currR > Q2[i].first.R  ){
+            agrega(arbolDFS[currR]);
             currR--;
         }
 
-        LCa = LCA(arbolDFS[Q2[i].L], arbolDFS[Q2[i].R]);
-        if(LCa != Q2[i].L && LCa != Q2[i].L)
-            agrega(LCa);
 
-        std::cout << "Query ("<<Q2[i].L<<", "<<Q2[i].R<<") = "<< currRes << '\n';
+        LCa = LCA(arbolDFS[Q2[i].first.L], arbolDFS[Q2[i].first.R]);
 
-        if(LCa != Q2[i].L && LCa != Q2[i].L)
+        if(LCa != Q2[i].first.L && LCa != Q2[i].first.L){
             agrega(LCa);
+          }
+
+        (Q2[i].second).second = currRes;
+
+
+        if(LCa != Q2[i].first.L && LCa != Q2[i].first.L){
+            agrega(LCa);
+        }
+
+
+
 
     }
 }
@@ -181,10 +192,8 @@ int main(){
   int N, Q, l, r;
   std::cin >> N;
 
-  for (int i = 0; i < N; i++){
+  for (int i = 0; i < N; i++)
     std::cin >> valores[i];
-    orden[i] = i;
-  }
 
   padres[0] = 0;
   alturas[0] = 0;
@@ -194,70 +203,57 @@ int main(){
 		hijos[padres[i]].push_back(i);
   }
 
+  //Crea las linealizaciones necesarias
   DFS(0);
+  //Define el tamanio del bloque
   block = floor(sqrt(arbolDFS.size()));
-  //Ordena que nodos estan primero en el arreglo linealizado
+
 
   std::cin >> Q;
   Query Queries[Q];
-  int lq, rq;
-  for (int i = 0; i < Q; i++){
-    std::cin >> lq >> rq;
-    Queries[i].L = lq;
-    Queries[i].R = rq;
-  }
-
-  //Ordena las queries
-  //Primero es necesario ver si son del caso donde uno de los dos es el LCA o no
+  for (int i = 0; i < Q; i++)
+    std::cin >> Queries[i].L >> Queries[i].R;
 
 
   int n = eulerTour.size();
-  int log_n = log(n);
-  construye_STable(n);
+  construye_STable(n); //Para los LCAs
 
+  //Acomoda las queries segun como se encuentren en la linealizacion
+  //y si estan en el caso donde contienen al LCA
   for (int i = 0; i < Q; i++){
     LCAs[i] = LCA(Queries[i].L, Queries[i].R);
-    std::cout << "LCA("<<Queries[i].L<<", "<<Queries[i].R<<") "<<LCAs[i] << '\n';
+    (Q2[i].second).first = i;
     if(LCAs[i] == Queries[i].L){
-          std::cout << "lca "<< Queries[i].L<<", "<<Queries[i].R << '\n';
-            Q2[i].L = first[Queries[i].L];
-            Q2[i].R = first[Queries[i].R];
+            Q2[i].first.L = first[Queries[i].L];
+            Q2[i].first.R = first[Queries[i].R];
     }else{
           if(LCAs[i] == Queries[i].R){
-            std::cout << "lca "<< Queries[i].L<<", "<<Queries[i].R << '\n';
-            Q2[i].L = first[Queries[i].R];
-            Q2[i].R = first[Queries[i].L];
+            Q2[i].first.L = first[Queries[i].R];
+            Q2[i].first.R = first[Queries[i].L];
           }else{
             if(last[Queries[i].L] < first[Queries[i].R]){
-              Q2[i].L = last[Queries[i].L];
-              Q2[i].R = first[Queries[i].R];
+              Q2[i].first.L = last[Queries[i].L];
+              Q2[i].first.R = first[Queries[i].R];
             }else{
-              Q2[i].L = last[Queries[i].R];
-              Q2[i].R = first[Queries[i].L];
+              Q2[i].first.L = last[Queries[i].R];
+              Q2[i].first.R = first[Queries[i].L];
             }
           }
     }
   }
 
-  std::cout << "Previo al orde" << '\n';
-
-  for (int i = 0; i < Q; i++) {
-    std::cout << "("<<Q2[i].L<<", "<<Q2[i].R<<") " << '\n';
-  }
-
+  //Ordenamos las queries segun como se pide en el algoritmo de Mo
   std::sort(Q2, Q2 + Q, ordena_q);
 
-  for (size_t i = 0; i < 2*N; i++) {
-    std::cout << arbolDFS[i] << " ";
-  }
-  std::cout  << '\n';
-
+  //Calculamos los resultados de las queries
   queryResults(N, Q);
 
-  /*std::cout << "despues del orden" << '\n';
-  for (int i = 0; i < Q; i++) {
-    std::cout << "("<<Q2[i].L<<", "<<Q2[i].R<<") " << '\n';
-  }*/
+  //Ordenamos segun como nos llegaron las queries
+  std::sort(Q2, Q2 + Q, ordena_print);
+
+  //Imprimimos los resultados
+  for (int i = 0; i < Q; i++)
+    std::cout << (Q2[i].second).second   << '\n';
 
 
   return 0;
