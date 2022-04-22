@@ -23,6 +23,8 @@ int ST[4*MAX][int(log(4*MAX))]; //Sparse table
 std::pair<Query, std::pair<int, int>> Q2[MAX]; //Guarda las queries, su orden original y su respuesta
 int LCAs[MAX]; //Guarda los LCAs
 int currRes;
+bool IncludeLCA[MAX]; //Nos indica si debemos incluir o no el LCA de cada Query
+int log_2[MAX];
 
 
 void DFS(int v){
@@ -48,44 +50,39 @@ void DFS(int v){
 void construye_STable(int n){
   //Inicializamos los intervalos de distancia 1
   for (int i = 0; i < n; i++)
-      ST[i][0] = eulerTour[i];
+      ST[0][i] = i;
 
   //Creamos el resto de la tabla
-  for (int j = 1; j <= log(n)+1; j++)
-    for (int i = 0; i + (1 << j) <= n; i++){
+  for (int j = 1; j <= n; j++)
+    for (int i = 0; i + (1 << j) - 1 <= n; i++){
       //Compara las alturas pero ingresa los nodos
-        if(alturas[ST[i][j-1]] < alturas[ST[i + (1 << (j - 1))][j - 1]]){
-          ST[i][j] = ST[i][j-1];
+        if(alturas[ST[j-1][i]] < alturas[ST[j-1][i + (1 << (j - 1))]]){
+          ST[j][i] = ST[j-1][i];
         }else{
-          ST[i][j] = ST[i + (1 << (j - 1))][j - 1];
+          ST[j][i] = ST[j-1][i + (1 << (j - 1))];
         }
       }
 }
 
-int LCA(int a, int b){
-  //Vemos en donde esta guardado en el Euler tour cada nodo
-  if(a == b)
-    return a;
-  int L = prim_visita[a];
-  int R = prim_visita[b];
-  if(L > R){
-    R = L;
-    L = prim_visita[b];
-  }
+int RanMQ(int a, int b){
+    if(b < a)
+        std::swap(a, b);
 
-  int j = ceil((int)log2(R - L + 1));
+    int k = log_2[b-a+1];
+    int x = ST[k][a];
+    int y = ST[k][b - (1 << k) + 1];
+    return (alturas[x] <= alturas[y])?x:y;
+}
 
-  //Como no nos importan las intersecciones en una ST de minimos
-  if (alturas[ST[L][j]] < alturas[ST[R-(1 << j)+1][j]]){
-        return ST[L][j];
-  }else{
-        return ST[R-(1 << j)+1][j];
-  }
+int LCA(int n1, int n2){
+  int a = prim_visita[n1];
+  int b = prim_visita[n2];
+  return eulerTour[RanMQ(a, b)];
 }
 
 void agrega(int n){
   int aux = 0;
-  if(cantidades[valores[n]] >= 3)
+  if(cantidades[valores[n]] == 3)
     aux = 1;
 
   if(process[n]){
@@ -98,9 +95,8 @@ void agrega(int n){
   }else{
     process[n] = 1;
     cantidades[valores[n]]++;
-    if(cantidades[valores[n]] >= 3 && aux == 0){
+    if(cantidades[valores[n]] == 3 && aux == 0){
       currRes++;
-      //std::cout << "cambio +"<< valores[n]  << '\n';
     }
   }
 }
@@ -124,65 +120,47 @@ bool ordena_print(std::pair<Query, std::pair<int, int>>  x, std::pair<Query, std
 void queryResults(int N, int Q){
 
     // Inicializamos L, R y la respuesta actual
-    int currL = Q2[0].first.L, currR = Q2[0].first.R;
-    int maxi = 0; int mini = 6000;
-    for (int i = currL; i < currR + 1; i++)
-      agrega(arbolDFS[i]);
-
-    int LCa = LCA(arbolDFS[Q2[0].first.L], arbolDFS[Q2[0].first.R]);
-
-    if(LCa != Q2[0].first.L && LCa != Q2[0].first.L)
-        agrega(LCa);
-
-    (Q2[0].second).second = currRes;
-
-
-    if(LCa != Q2[0].first.L && LCa != Q2[0].first.L){
-        agrega(LCa);
-    }
-
-
-
+    int currL = 0, currR = 0;
+    int L, R;
     // Recorremos las queries
-    for (int i = 1; i < Q; i++){
+    for (int i = 0; i < Q; i++){
+        L = Q2[i].first.L;
+        R = Q2[i].first.R;
         // Quitamos lo que no es necesario en la query
-        while (currL < Q2[i].first.L){
+        while (currL < L){
             agrega(arbolDFS[currL]);
             currL++;
         }
 
         // Agregamos los elementos de la izquierda
-        while (currL > Q2[i].first.L){
-            agrega(arbolDFS[currL-1]);
+        while (currL > L){
             currL--;
+            agrega(arbolDFS[currL]);
         }
 
-        while (currR < Q2[i].first.R){
-            agrega(arbolDFS[currR+1]);
+        while (currR < R){
             currR++;
+            agrega(arbolDFS[currR]);
         }
 
-        while (currR > Q2[i].first.R  ){
+        while (currR > R){
             agrega(arbolDFS[currR]);
             currR--;
         }
 
 
-        LCa = LCA(arbolDFS[Q2[i].first.L], arbolDFS[Q2[i].first.R]);
+        int LCa = LCA(arbolDFS[Q2[i].first.L], arbolDFS[Q2[i].first.R]);
 
-        if(LCa != Q2[i].first.L && LCa != Q2[i].first.L){
+        if(IncludeLCA[(Q2[i].second).first]){
             agrega(LCa);
-          }
+            std::cout << "si" << '\n';
+        }
 
         (Q2[i].second).second = currRes;
 
-
-        if(LCa != Q2[i].first.L && LCa != Q2[i].first.L){
+        if(IncludeLCA[(Q2[i].second).first]){
             agrega(LCa);
         }
-
-
-
 
     }
 }
@@ -192,6 +170,10 @@ int main(){
   std::cin.tie(0);
   int N, Q, l, r;
   std::cin >> N;
+
+  int Lsize = eulerTour.size();
+  for(int i = 2; i < Lsize + 2; i++)
+      log_2[i] = log_2[i/2] + 1;
 
   for (int i = 0; i < N; i++)
     std::cin >> valores[i];
@@ -223,23 +205,21 @@ int main(){
   //y si estan en el caso donde contienen al LCA
   for (int i = 0; i < Q; i++){
     LCAs[i] = LCA(Queries[i].L, Queries[i].R);
+    std::cout << "LACs[i]"<< LCAs[i] << '\n';
     (Q2[i].second).first = i;
-    if(LCAs[i] == Queries[i].L){
-            Q2[i].first.L = first[Queries[i].L];
-            Q2[i].first.R = first[Queries[i].R];
+    if(LCAs[i] == eulerTour[Queries[i].L] || LCAs[i] ==  eulerTour[Queries[i].L] ){
+          if(first[Queries[i].L] > first[Queries[i].R])
+            std::swap(Queries[i].L, Queries[i].R);
+          Q2[i].first.L = first[Queries[i].L];
+          Q2[i].first.R = first[Queries[i].R];
+          IncludeLCA[i] = false;
     }else{
-          if(LCAs[i] == Queries[i].R){
-            Q2[i].first.L = first[Queries[i].R];
-            Q2[i].first.R = first[Queries[i].L];
-          }else{
-            if(last[Queries[i].L] < first[Queries[i].R]){
-              Q2[i].first.L = last[Queries[i].L];
-              Q2[i].first.R = first[Queries[i].R];
-            }else{
-              Q2[i].first.L = last[Queries[i].R];
-              Q2[i].first.R = first[Queries[i].L];
-            }
-          }
+          if(last[Queries[i].L] < first[Queries[i].R])
+            std::swap(Queries[i].L, Queries[i].R);
+          Q2[i].first.L = last[Queries[i].L];
+          Q2[i].first.R = first[Queries[i].R];
+          IncludeLCA[i] = true;
+          std::cout << "ei" << '\n';
     }
   }
 
