@@ -57,6 +57,15 @@ int kmpMatch_p(const std::string &s, const std::string &p){
   return nc;
 }
 
+//Busca la cantidad de veces que aparece un caracter en una cadena
+int charMatch(const std::string &s, const char p){
+  int nc = 0;
+  for (int i = 0; i < s.size(); i++) {
+    if(s[i] == p)
+      nc++;
+  }
+  return nc;
+}
 
 //Crea un string con las diferencias entre los caracteres
 std::string diferencias(const std::string &s){
@@ -153,30 +162,41 @@ int main(){
     memset(resets_1, 0, sizeof resets_1);
     memset(resets_p, 0, sizeof resets_p);
     std::vector<int> res;
+    int dif;
 
     //Ingresamos las nuevas cadenas
     std::cin >> p >> s;
     std::string D_s = diferencias(s);
     std::string D_p = diferencias(p);
-    /*std::cout << "dif s" << '\n';
-    std::cout << D_s << '\n';
-    std::cout << "dif p" << '\n';
-    std::cout << D_p << '\n';*/
-    kmpPreprocess_1(D_p);
-    kmpPreprocess_p(p);
+    if(D_p.size() == 0){
+      for (int j = 0; j < s.size(); j++) {
+        dif = s[j] - p[0];
+        if(dif<0)
+          dif = dif + 26;
+        //std::cout << charMatch(shift(s, dif), p[0]) << '\n';
+        if(charMatch(shift(s, dif), p[0])  == 1)
+          res.push_back(dif);
+      }
+    }else{
+      /*std::cout << "dif s" << '\n';
+      std::cout << D_s << '\n';
+      std::cout << "dif p" << '\n';
+      std::cout << D_p << '\n';*/
+      kmpPreprocess_1(D_p);
+      kmpPreprocess_p(p);
 
-    //Aqui calculara los posibles shifts que nos den resultados, los cuales estaran en v
-    int k = kmpMatch_1(D_s, D_p, s, p);
+      //Aqui calculara los posibles shifts que nos den resultados, los cuales estaran en v
+      int k = kmpMatch_1(D_s, D_p, s, p);
 
-    if(k>0){
-      for (int j = 0; j < v.size(); j++) {
-        //std::cout << "v[j] = "<< v[j] << '\n';
-        //std::cout << shift(s, v[j]) << '\n';
-        if(kmpMatch_p(shift(s, v[j]), p) == 1)
-          res.push_back(v[j]);
+      if(k>0){
+        for (int j = 0; j < v.size(); j++) {
+          //std::cout << "v[j] = "<< v[j] << '\n';
+          //std::cout << shift(s, v[j]) << '\n';
+          if(kmpMatch_p(shift(s, v[j]), p) == 1)
+            res.push_back(v[j]);
+        }
       }
     }
-
     std::sort(res.begin(), res.end());
     std::cout << res.size() <<" ";
     for (int k = 0; k < res.size(); k++)
