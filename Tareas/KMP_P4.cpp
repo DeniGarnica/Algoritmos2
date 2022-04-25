@@ -57,21 +57,6 @@ int kmpMatch_p(const std::string &s, const std::string &p){
   return nc;
 }
 
-//Crea un string con las diferencias entre los caracteres
-std::string diferencias2(const std::string &s){
-  std::string D, aux;
-  for (int i = 0; i < s.size()-1; i++) {
-    if(s[i]-s[i+1] < 0){ //Probablemente el timeout es por las concatenaciones
-      aux = std::to_string(s[i]-s[i+1] + 26) + '.';
-      D = D + aux;
-    }else{
-      aux = std::to_string(s[i]-s[i+1]) + '.';
-      D = D + aux;
-    }
-  }
-  return D;
-}
-
 
 //Crea un string con las diferencias entre los caracteres
 std::string diferencias(const std::string &s){
@@ -192,6 +177,7 @@ int main(){
       }
     }
 
+    std::sort(res.begin(), res.end());
     std::cout << res.size() <<" ";
     for (int k = 0; k < res.size(); k++)
       std::cout << res[k] << " ";
