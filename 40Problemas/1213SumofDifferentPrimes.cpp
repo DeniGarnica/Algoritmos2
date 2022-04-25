@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 #define ll long long
-#define MAX 1500
+#define MAX 1500 
 ll arr[MAX];
 std::vector<ll> primos;
 ll N, k;

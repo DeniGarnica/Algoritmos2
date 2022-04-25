@@ -3,34 +3,38 @@
 #define MAX 100000
 int resets[MAX];
 
-void kmpPreprocess(const string &p){
+void kmpPreprocess(const std::string &p){
   int i = 0, j = -1;
   resets[0] = -1;
   while(i < p.size()){
+    //std::cout << i << std::endl;
     while(j >= 0 && p[i] != p[j]) j = resets[j];
     i++; j++;
     resets[i] = j;
   }
 }
 
-int kmpMatch(const string &s, const string &p){
+int kmpMatch(const std::string &s, const std::string &p){
   int i = 0, j = 0, nc = 0;
-  while(j >= 0 && s[i] != p[j]) j = resets[j];
-  i++; j++;
-  if(j == p.size()){
-    nc++;
-    j = resets[j];
+  while(i < s.size()){
+    while(j >= 0 && s[i] != p[j]) j = resets[j];
+    i++; j++;
+    if(j == p.size()){
+      nc++;
+      j = resets[j];
+    }
   }
+  return nc;
 }
 
 
 int main(){
   std::ios_base::sync_with_stdio(false);
   std::cin.tie(0);
-  int num_casos, dato1, dato2;
-  std::cin >> num_casos;
-  for (int i = 0; i < num_casos; i++) {
-    std::cin >> dato1;
-  }
+  std::string s = "abcblabladeblablayblablablaxyz";
+  std::string p = "blabla";
+  kmpPreprocess(p);
+  int k = kmpMatch(s, p);
+  std::cout << kmpMatch(s, p) << std::endl;
     return 0;
   }
