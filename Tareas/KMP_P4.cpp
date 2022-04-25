@@ -58,10 +58,10 @@ int kmpMatch_p(const std::string &s, const std::string &p){
 }
 
 //Crea un string con las diferencias entre los caracteres
-std::string diferencias(const std::string &s){
+std::string diferencias2(const std::string &s){
   std::string D, aux;
   for (int i = 0; i < s.size()-1; i++) {
-    if(s[i]-s[i+1] < 0){
+    if(s[i]-s[i+1] < 0){ //Probablemente el timeout es por las concatenaciones
       aux = std::to_string(s[i]-s[i+1] + 26) + '.';
       D = D + aux;
     }else{
@@ -71,6 +71,60 @@ std::string diferencias(const std::string &s){
   }
   return D;
 }
+
+
+//Crea un string con las diferencias entre los caracteres
+std::string diferencias(const std::string &s){
+
+  char D[3*s.size()];
+  int actual = 0;
+  for (int i = 0; i < s.size()-1; i++) {
+    if(s[i]-s[i+1] < 0){ //Probablemente el timeout es por las concatenaciones
+      if(s[i]-s[i+1] + 26 >=0 && s[i]-s[i+1] + 26 <= 9){
+        D[actual] = s[i]-s[i+1] + 26 + '0';
+        //std::cout << "D[actual] = "<<D[actual] << '\n';
+        actual++;
+        D[actual] = '.';
+        actual++;
+      }else{
+        if(s[i]-s[i+1] + 26 >= 20 )
+          D[actual] = '2';
+        else
+          D[actual] = '1';
+        actual++;
+        //std::cout << "D[actual] = "<<D[actual] << '\n';
+        D[actual] = (s[i]-s[i+1] + 26)%10 + '0';
+        //std::cout << "D[actual] = "<<D[actual] << '\n';
+        actual++;
+        D[actual] = '.';
+        actual++;
+      }
+    }else{
+      if(s[i]-s[i+1] >=0 && s[i]-s[i+1] <= 9){
+        D[actual] = s[i]-s[i+1] + '0';
+        //std::cout << "D[actual] = "<<D[actual] << '\n';
+        actual++;
+        D[actual] = '.';
+        actual++;
+      }else{
+        if(s[i]-s[i+1]  >= 20 )
+          D[actual] = '2';
+        else
+          D[actual] = '1';
+        actual++;
+        //std::cout << "D[actual] = "<<D[actual] << '\n';
+        D[actual] = (s[i]-s[i+1])%10 + '0';
+        //std::cout << "D[actual] = "<<D[actual] << '\n';
+        actual++;
+        D[actual] = '.';
+        actual++;
+      }
+    }
+  }
+  D[actual] = '\0';
+  return D;
+}
+
 
 //Realiza erl shift de una palabra
 std::string shift(const std::string &s, int n){
@@ -119,6 +173,10 @@ int main(){
     std::cin >> p >> s;
     std::string D_s = diferencias(s);
     std::string D_p = diferencias(p);
+    /*std::cout << "dif s" << '\n';
+    std::cout << D_s << '\n';
+    std::cout << "dif p" << '\n';
+    std::cout << D_p << '\n';*/
     kmpPreprocess_1(D_p);
     kmpPreprocess_p(p);
 
@@ -135,9 +193,8 @@ int main(){
     }
 
     std::cout << res.size() <<" ";
-    for (int k = 0; k < res.size(); k++) {
+    for (int k = 0; k < res.size(); k++)
       std::cout << res[k] << " ";
-    }
     std::cout << '\n';
   }
     return 0;
