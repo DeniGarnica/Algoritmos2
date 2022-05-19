@@ -7,8 +7,8 @@ void pre_proces(){
   for (int i = 1; i <= 1000; i++) {
     int auxi = 1;
     for (int j = 1; j < i; j++){
-      if(i % (j+1) == 0)
-        auxi += j+1;
+      if(i % (j+1) == 0) //Calcula los divisores
+        auxi += j+1; //Suma los divisores
     }
     Res[auxi] = i; //Guarda el mayor que de esa suma
   }
