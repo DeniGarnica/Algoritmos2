@@ -11,7 +11,7 @@ int dfs(int i, int j){
   if(visitado[i][j]) return 0; //Si ya hemos vsitado la casilla
   visitado[i][j] = 1; //Marcamos como visitada
   int res = 0;
-  res |= dfs(i+1, j);
+  res |= dfs(i+1, j); //Guardamos el resultado util
   res |= dfs(i-1, j);
   res |= dfs(i, j+1);
   res |= dfs(i, j-1);
