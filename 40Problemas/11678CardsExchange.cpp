@@ -5,6 +5,11 @@ using namespace std;
 map<ll, ll> mapa;
 map<ll, ll> mapa2;
 
+//Idea: creamos un map con cada una de las cartas de A y B
+//Despues solo buscamos en orden si la carta actual esta en el mazo de la otra
+//si no lo esta sumamos uno a la respuesta parcial
+//Al final devolvemos el minimo de las respuestas parciales
+
 int main(){
   ios_base::sync_with_stdio(false);
   cin.tie(0);
@@ -42,7 +47,7 @@ int main(){
         cont2++;
       }
     }
-    std::cout <<"ss" <<min(cont1, cont2) << '\n';
+    std::cout <<min(cont1, cont2) << '\n';
     std::cin >> dato1>> dato2;
     mapa.clear();
     mapa2.clear();
