@@ -1,3 +1,6 @@
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
 #include<bits/stdc++.h>
 #define ll long long
 ll DP[70][70][2]; //Representa [n_cajones][n_asegurados][1 si el de hasta arriba asegurado]

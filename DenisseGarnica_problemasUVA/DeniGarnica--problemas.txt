@@ -1,0 +1,80 @@
+User name: Deni Garnica
+https://uhunt.onlinejudge.org/id/1200134
+
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
+1. Introduction -------------------------(9)
+13025 - Back to the Past
+1709 - Amalgamated Artichokes
+11683 - Laser Sculpture
+12696 - Cabin Baggage
+12643 - Tennis Rounds
+
+11878 - Homework Checker
+12364 - In Braille
+
+11678 - Cards' Exchange
+11459 - Snakes and Ladders
+
+
+2. Data Structures and Libraries ---------(7)
+12150 - Pole Position
+12541 - Birthdates
+10264 - The Most Potent Corner
+1062 - Containers
+
+13148 - A Giveaway
+
+10895 - Matrix Transpose
+1197 - The Suspects
+
+3. Problem Solving Paradigms-------------(8)
+10128 - Queue
+12515 - Movie Police
+
+11621 - Small Factors
+12192 - Grapevine
+
+11520 - Fill the Square
+
+1213 - Sum of Different Primes
+10912 - Simple Minded Hashing
+11420 - Chest of Drawers
+
+4. Graph --------------------------------------(3)
+11561 - Getting Gold
+852 - Deciding victory in Go
+
+12347 - Binary Search Tree
+
+5. Mathematics----------------------------------(9)
+12004 - Bubble Sort
+11038 - How Many O's?
+11970 - Lucky Numbers
+701 - The Archeologists' Dilemma
+
+11955 - Binomial Theorem
+11310 - Delivery Debacle
+
+1644 - Prime Gap
+1210 - Sum of Consecutive Prime Numbers
+11728 - Alternate Task
+
+6. String Processing---------------------------(1)
+11584 - Partitioning by Palindromes
+
+7. (Computational) Geometry -------------------(3)
+587 - There's treasure everywhere!
+
+11909 - Soya Milk
+
+634 - Polygon
+
+
+
+
+
+
+
+

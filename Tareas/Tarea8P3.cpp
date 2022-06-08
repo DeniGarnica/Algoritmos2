@@ -4,7 +4,6 @@
 ll m = 1000000007; //Con este valor de m la probabilidad de colision es muy baja
 ll p[MAX]; //Arreglo de potencias del primo
 ll h[MAX][MAX]; //hash del string que incia en i y termina en j,
-int val = 0;
 
 //Precalcula las potencias del primo
 void p_i(int prime, int n){
@@ -19,7 +18,7 @@ ll hash(std::string &s, int i, int j){
     return h[i][j];
   ll res = 0;
   for (int k = i; k <= j; k++)
-    res += (p[k-i]*(s[k] - val + 1))%m;
+    res += (p[k-i]*(s[k] - 'A' + 1))%m;
   h[i][j] = res;
   return res;
 }
@@ -32,9 +31,9 @@ ll hash_p_i(int i, int j){
 //Precalcula todos los hash de todos los prefijos en O(n)
 void rolling_hash_prefijos(std::string &s){
   int n = s.size();
-  h[0][0] = (s[0] - val + 1)%m;
+  h[0][0] = (s[0] - 'A' + 1)%m;
   for (int i = 1; i < n; i++){
-    h[0][i] =  (h[0][i-1] + (s[0] - val + 1)*p[i])%m;
+    h[0][i] =  (h[0][i-1] + (s[0] - 'A' + 1)*p[i])%m;
   }
   return;
 }
@@ -42,9 +41,9 @@ void rolling_hash_prefijos(std::string &s){
 //Precalcula todos los hash de todos los sufijos en O(n)
 void rolling_hash_sufijos(std::string &s){ //
   int n = s.size();
-  h[n-1][n-1] = (s[n-1] - val + 1)%m;
+  h[n-1][n-1] = (s[n-1] - 'A' + 1)%m;
   for (int i = n-2; i >= 0; i--){
-    h[i][n-1] =  (h[i+1][n-1]*p[1] + (s[i] - val + 1))%m;
+    h[i][n-1] =  (h[i+1][n-1]*p[1] + (s[i] - 'A' + 1))%m;
   }
   return;
 }
@@ -53,10 +52,7 @@ void rolling_hash_sufijos(std::string &s){ //
 //Le pasasmos el hash de s[i][j] y calcula el de s[i-1][j-1]
 //Es decir, conserva el tama;o, solo se mueve una posicion a la izq
 ll rolling_hash(std::string &s, int h_ant, int i, int j){
-  //std::cout << "h_actual = "<< h_ant << '\n';
-  //std::cout << "(s[i-1] - val + 1) "<< (s[i-1] - val + 1) << '\n';
-  //std::cout << "(s[j] - val + 1)*p[j-i] = ("<< s[j] - val + 1<<")*"<<p[j-i] << '\n';
-  h[i-1][j-1] =  ((s[i-1] - val + 1) + p[1]*(h_ant - (s[j] - val + 1)*p[j-i]))%m ;
+  h[i-1][j-1] =  ((s[i-1] - 'A' + 1) + p[1]*(h_ant - (s[j] - 'A' + 1)*p[j-i]))%m ;
   return h[i-1][j-1];
 }
 
@@ -66,32 +62,20 @@ void hash_substring_i(std::string &s, int i){
   ll auxi;
   ll h_actual;
   h_actual = h[n-i][n-1]; //Este ya lo precalculamos anteriormente
-  //std::cout << "sufijo = h["<<n-i<< "]["<<n-1<<"] = "<< h[n-i][n-1] << '\n';
   //Iremos calculando los hash de tama;o i con rolling hashing
-  for (int j = n-1; j >= i; j--){
+  for (int j = n-1; j >= i; j--)
     h_actual = rolling_hash(s, h_actual, j-i+1 ,j);
-    //std::cout << "h["<< j-i<<"]["<<j-1 <<"] = "<< h[j-i][j-1] << '\n';
-  }
-
   return;
 }
 
 int respuesta(std::string &s, int mayor, int k, int n){
-  int cont = 0;
   for (int i = mayor; i >= 1 ; i--){
-    //std::cout << "i: "<< i << " ";
     hash_substring_i(s, i);
     for (int j = 0; j <= n - i*k; j++) {
       for (int l = 0; l < k-1; l++) {
-        //std::cout << "segundo h["<<j+(k-1)*l<<"]["<< i-1+j+(k-1)*l <<"] =? h["<<i+j+(k-1)*l<<"]["<<2*i-1+j+(k-1)*l<<"] " << '\n';
-        //std::cout << h[j+k*l][i-1+j+k*l] << "   "<< h[i+j+k*l][2*i-1+j+k*l] << '\n';
-        if(h[j+(k-1)*l][i-1+j+(k-1)*l] == h[i+j+(k-1)*l][2*i-1+j+(k-1)*l]){
-          cont++;
-          //std::cout << "si" << '\n';
-        }else{
+        if(h[j + l*i][j + (l+1)*i - 1] != h[j + (l+1)*i][j + (l+2)*i - 1])
           break;
-        }
-        if(cont+1 >= k)
+        if(l == k-2)
           return i*k;
       }
     }
@@ -114,8 +98,6 @@ int main(){
       std::cout << n << '\n';
     }else{
       p_i(33, n+3);
-      if(s[0]<= 90) val = int('A');
-      else val = int('a');
       rolling_hash_sufijos(s);
       int mayor = ceil(n/k);
       int res = respuesta(s, mayor, k, n);

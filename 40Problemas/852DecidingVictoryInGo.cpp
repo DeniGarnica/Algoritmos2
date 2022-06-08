@@ -1,3 +1,6 @@
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
 #include<bits/stdc++.h>
 #define ll long long
 char Go_board[10][10];

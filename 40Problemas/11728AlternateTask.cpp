@@ -1,3 +1,6 @@
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
 #include<bits/stdc++.h>
 #define ll long long
 std::vector<std::pair<int, int>> v; //Guarda la suma de los divisores del segundo elemento

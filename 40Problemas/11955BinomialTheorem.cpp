@@ -1,16 +1,21 @@
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
 #include <iostream>
 #include <cmath>
 #include <vector>
 using namespace std;
 typedef long long ll;
-ll F[51];
-ll C[51][51];
+ll F[51]; //guarda los factoriales
+ll C[51][51]; //guarda las combinaciones posibles
+
 ll factorial(int a){
-  if(F[a]==0)
+  if(F[a]==0) //si no lo hemos calculado ya
     F[a]= a*factorial(a-1);
   return F[a];
 }
 
+//precalculamos las combinaciones de C[n][k], variando k hasta n
 void Combi(int n){
   C[n][0]=1; C[n][n]=1;
   if(n>0){
@@ -18,12 +23,8 @@ void Combi(int n){
   }
   if(n>3){
   if (C[n-1][0]==1) {
-    //std::cout << n << '\n';
     for (int k = 2; k < n-1; k++){
-      //std::cout << "C["<< n-1<<"][" << k-1<<"]:"<< C[n-1][k-1] << '\n';
-      //std::cout << "C["<< n-1<<"][" << k<<"]:"<< C[n-1][k] << '\n';
-      C[n][k]= C[n-1][k-1] + C[n-1][k];
-      //std::cout << "C["<< n<<"][" << k<<"]:"<< C[n][k] << '\n';
+    C[n][k]= C[n-1][k-1] + C[n-1][k];
     }
   }else{
     for (int k = 2; k < n-2; k++){
@@ -73,14 +74,13 @@ int main(){
   }
   F[0]=1;
   F[1]=1;
-  for (int i = 0; i < 51; i++) { //Me di cuenta que es mas veloz crear en orden todo el triangulo de pascal
+  for (int i = 0; i < 51; i++)
+    //Me di cuenta que es mas veloz crear en orden todo el triangulo de pascal
     Combi(i);
-  }
 
   int n;
   string op;
-  char A[50];
-  char B[50];
+  char A[50]; char B[50];
   int cont = 0;
   char aux;
   int p;

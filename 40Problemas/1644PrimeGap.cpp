@@ -1,9 +1,13 @@
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
 #include<bits/stdc++.h>
 #define ll long long
 #define MAX 1500000
 ll arr[MAX];
 std::vector<ll> primos;
 
+//precalculamos los primos
 void criba(){
   arr[1]=1;
   arr[2]=1;
@@ -11,7 +15,7 @@ void criba(){
     arr[i]=1;
   for (ll i = 2; i < MAX; i++) {
     if(arr[i]==1){
-      primos.push_back(i);
+      primos.push_back(i); //guadamos los rpimos
       for (ll j = i*i; j < MAX; j+=i)
         arr[j] = 0;
     }

@@ -1,3 +1,6 @@
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
 #include<bits/stdc++.h>
 #define ll long long
 
@@ -31,6 +34,6 @@ int main(){
     cont++;
     std::cin >> L >> S;
   }
-  
+
     return 0;
   }

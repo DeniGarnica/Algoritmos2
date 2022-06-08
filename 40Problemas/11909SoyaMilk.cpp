@@ -1,3 +1,6 @@
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
 #include <cstdio>
 #include <cmath>
 #include <algorithm>

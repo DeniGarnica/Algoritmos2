@@ -3,7 +3,8 @@
 #define MAX 100000
 int resets_1[MAX];
 int resets_p[MAX];
-std::vector<int> v; //Almacenaremos los posibles shift que nos den el resultado
+//Almacenaremos los posibles shift que nos den el resultado
+std::vector<int> v;
 
 void kmpPreprocess_1(const std::string &p){
   int i = 0, j = -1;
@@ -76,7 +77,6 @@ std::string diferencias(const std::string &s){
     if(s[i]-s[i+1] < 0){ //Probablemente el timeout es por las concatenaciones
       if(s[i]-s[i+1] + 26 >=0 && s[i]-s[i+1] + 26 <= 9){
         D[actual] = s[i]-s[i+1] + 26 + '0';
-        //std::cout << "D[actual] = "<<D[actual] << '\n';
         actual++;
         D[actual] = '.';
         actual++;
@@ -86,9 +86,7 @@ std::string diferencias(const std::string &s){
         else
           D[actual] = '1';
         actual++;
-        //std::cout << "D[actual] = "<<D[actual] << '\n';
         D[actual] = (s[i]-s[i+1] + 26)%10 + '0';
-        //std::cout << "D[actual] = "<<D[actual] << '\n';
         actual++;
         D[actual] = '.';
         actual++;
@@ -96,7 +94,6 @@ std::string diferencias(const std::string &s){
     }else{
       if(s[i]-s[i+1] >=0 && s[i]-s[i+1] <= 9){
         D[actual] = s[i]-s[i+1] + '0';
-        //std::cout << "D[actual] = "<<D[actual] << '\n';
         actual++;
         D[actual] = '.';
         actual++;
@@ -106,9 +103,7 @@ std::string diferencias(const std::string &s){
         else
           D[actual] = '1';
         actual++;
-        //std::cout << "D[actual] = "<<D[actual] << '\n';
         D[actual] = (s[i]-s[i+1])%10 + '0';
-        //std::cout << "D[actual] = "<<D[actual] << '\n';
         actual++;
         D[actual] = '.';
         actual++;
@@ -173,15 +168,10 @@ int main(){
         dif = s[j] - p[0];
         if(dif<0)
           dif = dif + 26;
-        //std::cout << charMatch(shift(s, dif), p[0]) << '\n';
         if(charMatch(shift(s, dif), p[0])  == 1)
           res.push_back(dif);
       }
     }else{
-      /*std::cout << "dif s" << '\n';
-      std::cout << D_s << '\n';
-      std::cout << "dif p" << '\n';
-      std::cout << D_p << '\n';*/
       kmpPreprocess_1(D_p);
       kmpPreprocess_p(p);
 
@@ -190,8 +180,6 @@ int main(){
 
       if(k>0){
         for (int j = 0; j < v.size(); j++) {
-          //std::cout << "v[j] = "<< v[j] << '\n';
-          //std::cout << shift(s, v[j]) << '\n';
           if(kmpMatch_p(shift(s, v[j]), p) == 1)
             res.push_back(v[j]);
         }

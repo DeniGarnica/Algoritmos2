@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 #define ll long long
-#define MAX 100000
+#define MAX 400000
 int resets[MAX];
 
 /*

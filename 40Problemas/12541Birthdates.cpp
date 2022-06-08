@@ -1,3 +1,6 @@
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
 #include<bits/stdc++.h>
 #define ll long long
 
@@ -13,6 +16,7 @@ int main(){
     std::cin >> name >> dia >> mes >> year;
     //le daremos mas peso al year, despues al mes y por ultimo al dia
     actual = dia + mes*100 + year*1000;
+    //guardamos el mayor y menor actual
     if(mayor < actual){
       mayor = actual;
       n_mayor = name;
@@ -22,6 +26,7 @@ int main(){
       n_menor = name;
     }
   }
+  //imprimos los resultados
   std::cout << n_mayor << '\n';
   std::cout << n_menor << '\n';
   return 0;

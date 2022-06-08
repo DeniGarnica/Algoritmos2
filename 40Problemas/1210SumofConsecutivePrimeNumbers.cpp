@@ -1,3 +1,6 @@
+//Denisse Garnica Sanchez
+//denisse.garnica@cimat.mx
+
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,12 +33,12 @@ int main(){
   ll num, cont, suma;
   std::cin >> num;
   while (num) { //Mientras el numero ingresado sea distinto de cero
-    cont = 0;  //REiniciamos la cuenta
+    cont = 0;  //Reiniciamos la cuenta
     for (ll i = 0; primes[i]<=num; i++){ //Como maximo odemos llegar a un primo menor igual al numero
       suma = primes[i]; //Iniciamos la suma en el primo
       for (ll j = i+1;  suma < num; j++) //Vamos sumando los siguientes primos.
         suma+=primes[j];
-      if(suma==num) 
+      if(suma==num)
         cont++;
     }
     std::cout << cont << '\n';

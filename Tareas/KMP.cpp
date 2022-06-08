@@ -7,7 +7,6 @@ void kmpPreprocess(const std::string &p){
   int i = 0, j = -1;
   resets[0] = -1;
   while(i < p.size()){
-    //std::cout << i << std::endl;
     while(j >= 0 && p[i] != p[j]) j = resets[j];
     i++; j++;
     resets[i] = j;
@@ -34,6 +33,10 @@ int main(){
   std::string s = "abcblabladeblablayblablablaxyz";
   std::string p = "blabla";
   kmpPreprocess(p);
+  for (int i = 0; i < p.size(); i++){
+    std::cout << resets[i] << " ";
+  }
+  std::cout  << std::endl;
   int k = kmpMatch(s, p);
   std::cout << kmpMatch(s, p) << std::endl;
     return 0;

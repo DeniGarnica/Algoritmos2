@@ -9,5 +9,6 @@ int main(){
   for (int i = 0; i < num_casos; i++) {
     std::cin >> dato1;
   }
-    return 0;
+
+  return 0;
   }

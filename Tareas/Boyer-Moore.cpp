@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
 #define ll long long
 #define MAX 1000000
-//En esta implementacion se uso el alfabeto ascii completo,
+//En esta implementacion se uso el alfabeto completo usual,
 //por lo que para cambiar esto se deben hacer algunos cambios
 //como el tama;o de las siguientes dos constantes
 #define ALP_SIZE 26 //Nos dice el tama;o del alfabeto
