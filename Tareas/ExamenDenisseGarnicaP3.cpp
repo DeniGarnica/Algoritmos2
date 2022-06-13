@@ -147,6 +147,15 @@ vector<point> CH_Graham(vector<point> &P) {
     return S;
 }
 
+//le pasamos el conjunto de puntos del CH ordenado y nos devuelve la distancia
+double CH_dist(vector<point> CH){
+  double res = 0;
+  for (int i = 0; i < CH.size()-1; i++){
+    //std::cout << "dist[("<< CH[i].x << ", " << CH[i].y<< "), (" << CH[i+1].x << ", " << CH[i+1].y<< ")] = "<< dist(CH[i], CH[i+1]) << '\n';
+    res += dist(CH[i], CH[i+1]);
+  }
+  return res;
+}
 
 
 int main(){
@@ -163,10 +172,8 @@ int main(){
   }
 
   vector<point> CH =  CH_Graham(P); //recordemos que repite el primer y ultimo punto
-std::cout  << '\n';
-  for (int i = 0; i < CH.size()-1; i++) {
-    std::cout << CH[i].x << " " << CH[i].y << '\n';
-  }
+
+  std::cout << CH_dist(CH) << '\n';
 
   return 0;
   }
